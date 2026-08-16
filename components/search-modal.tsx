@@ -117,6 +117,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                             src={p.coverImage}
                             alt={p.title}
                             fill
+                            unoptimized
                             className="object-cover"
                             sizes="56px"
                           />

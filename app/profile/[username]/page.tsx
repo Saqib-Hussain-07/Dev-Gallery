@@ -24,10 +24,11 @@ export default async function ProfilePage({
     <div className="max-w-4xl mx-auto px-6 py-16">
       <div className="flex items-center gap-5 mb-4">
         <Image
-          src={owner.avatarUrl}
+          src={owner.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
           alt={owner.displayName}
           width={72}
           height={72}
+          unoptimized
           className="rounded-full border-2 border-ink"
         />
         <div>

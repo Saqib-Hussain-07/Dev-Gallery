@@ -2,22 +2,34 @@
 
 import Link from "next/link";
 import { Search, Bookmark, Sparkles, LayoutGrid } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function Navbar() {
   const [bookmarkCount, setBookmarkCount] = useState(0);
 
-  useEffect(() => {
+  const updateCount = useCallback(() => {
     try {
       const saved = localStorage.getItem("wop_bookmarks");
       if (saved) {
         const parsed = JSON.parse(saved);
         setBookmarkCount(Array.isArray(parsed) ? parsed.length : 0);
+      } else {
+        setBookmarkCount(0);
       }
     } catch {
-      // ignore
+      setBookmarkCount(0);
     }
   }, []);
+
+  useEffect(() => {
+    updateCount();
+    window.addEventListener("wop_bookmarks_updated", updateCount);
+    window.addEventListener("storage", updateCount);
+    return () => {
+      window.removeEventListener("wop_bookmarks_updated", updateCount);
+      window.removeEventListener("storage", updateCount);
+    };
+  }, [updateCount]);
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E5E7EB] transition-all">
@@ -46,7 +58,7 @@ export function Navbar() {
         >
           <div className="flex items-center gap-2.5">
             <Search size={16} className="text-[#9CA3AF]" />
-            <span className="text-[#6B7280] truncate">Search Designers, Roles or Skills...</span>
+            <span className="text-[#6B7280] truncate">Search Portfolios, Categories or Stack...</span>
           </div>
           <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[11px] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-md font-medium text-[#4B5563] shadow-2xs">
             ⌘K
@@ -73,7 +85,7 @@ export function Navbar() {
           >
             <Bookmark size={20} />
             {bookmarkCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-in zoom-in-50">
                 {bookmarkCount}
               </span>
             )}

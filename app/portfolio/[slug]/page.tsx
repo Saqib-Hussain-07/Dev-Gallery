@@ -129,10 +129,11 @@ export default async function PortfolioDetailPage({
 
           <div className="flex items-center gap-3">
             <Image
-              src={portfolio.owner.avatarUrl}
+              src={portfolio.owner.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
               alt=""
               width={36}
               height={36}
+              unoptimized
               className="rounded-full border border-ink"
             />
             <div className="text-sm">
@@ -168,6 +169,7 @@ export default async function PortfolioDetailPage({
         <Image
           src={portfolio.coverImage}
           alt={portfolio.title}
+          unoptimized
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 1024px"

@@ -42,6 +42,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         setIsBookmarked(true);
       }
       localStorage.setItem("wop_bookmarks", JSON.stringify(list));
+      window.dispatchEvent(new Event("wop_bookmarks_updated"));
     } catch {
       // ignore
     }

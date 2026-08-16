@@ -76,17 +76,18 @@ export function TrendingSection({
                 </span>
 
                 <div className="relative w-14 h-14 rounded-sm overflow-hidden border border-rule shrink-0">
-                  <Image src={p.coverImage} alt="" fill sizes="56px" className="object-cover" />
+                  <Image src={p.coverImage} alt="" fill unoptimized sizes="56px" className="object-cover" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-display text-base truncate">{p.title}</h3>
                   <div className="flex items-center gap-2 text-xs text-ink-faint">
                     <Image
-                      src={p.owner.avatarUrl}
+                      src={p.owner.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
                       alt=""
                       width={14}
                       height={14}
+                      unoptimized
                       className="rounded-full"
                     />
                     <span className="truncate">{p.owner.displayName}</span>

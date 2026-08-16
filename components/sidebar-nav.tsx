@@ -21,7 +21,7 @@ export function SidebarNav() {
       isActive: false,
     },
     {
-      href: "/portfolio/asha-menon-product-design/admin",
+      href: "/portfolio/paco-coursey/admin",
       label: "Sync / Admin",
       icon: LayoutDashboard,
       isActive: pathname.includes("/admin"),

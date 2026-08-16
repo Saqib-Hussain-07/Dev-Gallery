@@ -35,6 +35,7 @@ export function RecentlyAddedSection({ portfolios }: { portfolios: Portfolio[] }
                 src={p.coverImage}
                 alt={p.title}
                 fill
+                unoptimized
                 sizes="256px"
                 className="object-cover"
               />
@@ -52,10 +53,11 @@ export function RecentlyAddedSection({ portfolios }: { portfolios: Portfolio[] }
             <div className="p-3">
               <div className="flex items-center gap-2 mb-1.5">
                 <Image
-                  src={p.owner.avatarUrl}
+                  src={p.owner.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
                   alt=""
                   width={18}
                   height={18}
+                  unoptimized
                   className="rounded-full border border-rule"
                 />
                 <span className="text-xs text-ink-soft truncate">{p.owner.displayName}</span>
