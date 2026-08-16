@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
-import { Sparkles, Globe, ArrowRight } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { CategoriesSection } from "@/components/categories-section";
 import { MostLikedStories } from "@/components/most-liked-stories";
@@ -35,7 +34,7 @@ export default function HomePage() {
       {/* Main Content Area */}
       <div className="flex-1 w-full min-w-0 px-4 sm:px-8 py-6 sm:py-8 max-w-7xl mx-auto">
         {/* HERO SECTION */}
-        <section className="text-center pt-6 sm:pt-10 pb-8 flex flex-col items-center">
+        <section className="text-center pt-6 sm:pt-10 pb-6 flex flex-col items-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#E5E7EB] text-xs font-semibold text-[#4B5563] mb-6 shadow-2xs">
             <Sparkles size={13} className="text-amber-500" />
             <span>Discover &amp; Showcase Worldwide Portfolios</span>
@@ -49,30 +48,6 @@ export default function HomePage() {
           <p className="text-sm sm:text-lg text-[#4B5563] mt-4 max-w-2xl font-normal leading-relaxed">
             Explore handpicked portfolios, live sites &amp; project showcases from top builders.
           </p>
-
-          {/* Global Showcase Banner */}
-          <div className="w-full max-w-3xl mt-8 p-6 sm:p-8 rounded-3xl bg-white border border-[#E5E7EB] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#F3F4F6] flex items-center justify-center text-[#111827] shrink-0">
-                <Globe size={24} />
-              </div>
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-[#111827] leading-snug">
-                  Showcase your portfolio to builders &amp; recruiters worldwide
-                </h2>
-                <p className="text-xs text-[#6B7280] mt-0.5">
-                  Get indexed, reviewed, and discovered by teams globally.
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/submit"
-              className="shrink-0 px-5 py-2.5 rounded-full bg-black text-white hover:bg-[#27272A] text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-xs"
-            >
-              <span>Submit Portfolio</span>
-              <ArrowRight size={15} />
-            </Link>
-          </div>
         </section>
 
         {/* EXPLORE TOP CATEGORIES */}
