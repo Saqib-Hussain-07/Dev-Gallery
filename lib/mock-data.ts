@@ -20,7 +20,7 @@ export const CATEGORIES = [
     slug: "minimalist",
     label: "Minimalist Design Portfolios",
     count: "740+ Portfolios",
-    cover: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+    cover: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
   },
   {
     slug: "dark-theme",
@@ -32,25 +32,25 @@ export const CATEGORIES = [
     slug: "interactive",
     label: "Interactive Design Portfolios",
     count: "290+ Portfolios",
-    cover: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
+    cover: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=800&q=80",
   },
   {
     slug: "creative",
     label: "Creative Design Portfolios",
     count: "170+ Portfolios",
-    cover: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80",
+    cover: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80",
   },
   {
     slug: "modern-layouts",
     label: "Modern Layout Design Portfolios",
     count: "90+ Portfolios",
-    cover: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=800&q=80",
+    cover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80",
   },
   {
     slug: "engineering",
     label: "Engineering & Technical Showcase",
     count: "450+ Portfolios",
-    cover: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+    cover: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
   },
 ] as const;
 
