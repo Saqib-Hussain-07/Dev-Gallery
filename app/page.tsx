@@ -39,12 +39,13 @@ export default function HomePage() {
   }, [selectedCategory, selectedTech]);
 
   return (
-    <div className="flex w-full min-h-screen bg-[#FFFFFF]">
+    <div className="flex w-full min-h-screen bg-[#ECEEF2]">
       {/* Left Sidebar Navigation */}
       <SidebarNav />
 
-      {/* Main Content Area */}
-      <div className="flex-1 w-full min-w-0 px-4 sm:px-8 py-6 sm:py-8 max-w-7xl mx-auto">
+      {/* Main Content Area: Large White Card with Rounded Top-Left */}
+      <div className="flex-1 w-full min-w-0 px-4 sm:px-8 py-6 sm:py-8 bg-white rounded-tl-[32px] sm:rounded-tl-[36px] border-t border-l border-[#D8DCE3] shadow-xs">
+        <div className="max-w-7xl mx-auto">
         {/* HERO SECTION */}
         <section className="text-center pt-6 sm:pt-10 pb-6 flex flex-col items-center">
           {/* Live Ecosystem Ticker */}
@@ -160,6 +161,7 @@ export default function HomePage() {
             )}
           </div>
         </section>
+        </div>
       </div>
 
       {/* Search Modal */}

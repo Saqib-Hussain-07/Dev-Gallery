@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, FolderGit2, LayoutDashboard } from "lucide-react";
+import { Home, Layers, BookOpen, Kanban } from "lucide-react";
 
 export function SidebarNav() {
   const pathname = usePathname();
@@ -11,26 +11,32 @@ export function SidebarNav() {
     {
       href: "/",
       label: "Portfolios",
-      icon: Compass,
+      icon: Home,
       isActive: pathname === "/",
     },
     {
       href: "/#categories",
-      label: "Categories",
-      icon: FolderGit2,
+      label: "Studio",
+      icon: Layers,
+      isActive: false,
+    },
+    {
+      href: "/#wall",
+      label: "Cases",
+      icon: BookOpen,
       isActive: false,
     },
     {
       href: "/portfolio/paco-coursey/admin",
-      label: "Sync / Admin",
-      icon: LayoutDashboard,
+      label: "Tracker",
+      icon: Kanban,
       isActive: pathname.includes("/admin"),
     },
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col items-center w-16 shrink-0 py-6 border-r border-[#E5E7EB] bg-[#FFFFFF] sticky top-[68px] h-[calc(100vh-68px)] z-30">
-      <nav className="flex flex-col items-center gap-5 w-full px-1.5" aria-label="App Navigation">
+    <aside className="hidden lg:flex flex-col items-center w-22 shrink-0 py-6 bg-[#ECEEF2] sticky top-[68px] h-[calc(100vh-68px)] z-30">
+      <nav className="flex flex-col items-center gap-7 w-full px-2" aria-label="Main Navigation">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -38,22 +44,25 @@ export function SidebarNav() {
               key={item.label}
               href={item.href}
               title={item.label}
-              className={`flex flex-col items-center gap-1 w-full py-2 px-1 rounded-xl text-center transition-all group ${
+              className={`flex flex-col items-center gap-1.5 w-full py-2 px-1 text-center transition-all group ${
                 item.isActive
-                  ? "text-[#111827] font-semibold"
-                  : "text-[#6B7280] hover:text-[#111827]"
+                  ? "text-black font-bold"
+                  : "text-[#4B5563] hover:text-black"
               }`}
             >
               <div
-                className={`p-2 rounded-xl transition-all ${
+                className={`p-2.5 rounded-xl transition-all ${
                   item.isActive
-                    ? "bg-[#111827] text-white shadow-xs"
-                    : "text-[#6B7280] hover:bg-[#F4F4F5] hover:text-black group-hover:scale-105"
+                    ? "text-black"
+                    : "text-[#4B5563] group-hover:text-black group-hover:scale-105"
                 }`}
               >
-                <Icon size={17} />
+                <Icon
+                  size={24}
+                  className={item.isActive ? "stroke-[2.5]" : "stroke-[1.75]"}
+                />
               </div>
-              <span className="text-[10px] font-medium leading-none tracking-tight">
+              <span className="text-xs font-semibold tracking-tight">
                 {item.label}
               </span>
             </Link>

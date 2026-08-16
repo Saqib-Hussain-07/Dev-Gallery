@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Bookmark, Sparkles, Shuffle, Terminal } from "lucide-react";
+import { Search, Bookmark, Sparkles, Shuffle } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { portfolios } from "@/lib/mock-data";
 
@@ -43,24 +43,32 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-[#E4E4E7] shadow-xs transition-all">
+    <header className="sticky top-0 z-40 bg-[#ECEEF2] border-b border-[#D8DCE3] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 sm:h-[68px] gap-4">
-        {/* Left: DevGallery Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#18181B] via-[#09090B] to-black text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:scale-105 transition-transform border border-white/10 ring-1 ring-black/5">
-            <Terminal size={17} className="text-violet-400" />
+        {/* Left: Brand Logo from Screenshot */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+          {/* Logo SVG Icon */}
+          <div className="flex items-center text-black">
+            <svg
+              width="36"
+              height="22"
+              viewBox="0 0 44 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-black transition-transform group-hover:scale-105"
+            >
+              <path
+                d="M3 14C5 7 9 4 13 4L17 17L23 5L28 19L33 9C35 5 39 4 43 4L37 20L30 8L24 20L18 7L13 20L3 14Z"
+                fill="currentColor"
+              />
+            </svg>
           </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-base tracking-tight text-[#09090B] leading-none">
-                DevGallery
-              </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-violet-100 text-violet-800 border border-violet-200">
-                PRO
-              </span>
-            </div>
-            <span className="text-[11px] text-[#71717A] font-medium leading-tight mt-0.5">
-              Curated Developer Portfolios
+          <div className="flex flex-col leading-tight">
+            <span className="font-extrabold text-[10px] tracking-wider text-black">
+              WALL OF
+            </span>
+            <span className="font-black text-sm tracking-tight text-black leading-none">
+              PORTFOLIOS
             </span>
           </div>
         </Link>
@@ -70,29 +78,29 @@ export function Navbar() {
           type="button"
           data-command-trigger
           aria-label="Search portfolios"
-          className="hidden md:flex items-center justify-between w-full max-w-md bg-[#F4F4F5]/90 hover:bg-[#E4E4E7] text-[#71717A] hover:text-[#09090B] px-4 py-2 rounded-full border border-[#E4E4E7] hover:border-[#D4D4D8] transition-all text-sm font-normal shadow-2xs cursor-pointer group"
+          className="hidden md:flex items-center justify-between w-full max-w-md bg-white hover:bg-[#F9FAFB] text-[#6B7280] hover:text-black px-4 py-2 rounded-full border border-[#D8DCE3] hover:border-[#9CA3AF] transition-all text-sm font-normal shadow-2xs cursor-pointer group"
         >
           <div className="flex items-center gap-2.5">
-            <Search size={16} className="text-[#A1A1AA] group-hover:text-black transition-colors" />
-            <span className="text-[#71717A] group-hover:text-[#18181B] truncate text-xs sm:text-sm">
-              Search portfolios, categories or tech stack...
+            <Search size={16} className="text-[#9CA3AF] group-hover:text-black transition-colors" />
+            <span className="text-[#6B7280] group-hover:text-black truncate text-xs sm:text-sm">
+              Search portfolios, categories or stack...
             </span>
           </div>
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[11px] bg-white border border-[#E4E4E7] px-2 py-0.5 rounded-md font-medium text-[#71717A] shadow-2xs">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[11px] bg-[#F3F4F6] border border-[#E5E7EB] px-2 py-0.5 rounded-md font-medium text-[#4B5563] shadow-2xs">
             ⌘K
           </kbd>
         </button>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Random Shuffle Button */}
           <button
             type="button"
             onClick={handleRandomShuffle}
             title="Surprise me with a random live portfolio"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#F4F4F5] hover:bg-[#E4E4E7] text-[#18181B] text-xs font-semibold border border-[#E4E4E7] transition-all hover:scale-102 active:scale-98 cursor-pointer shadow-2xs"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-white hover:bg-[#F9FAFB] text-black text-xs font-semibold border border-[#D8DCE3] transition-all hover:scale-102 active:scale-98 cursor-pointer shadow-2xs"
           >
-            <Shuffle size={13} className="text-violet-600" />
+            <Shuffle size={13} className="text-black" />
             <span>Shuffle</span>
           </button>
 
@@ -101,7 +109,7 @@ export function Navbar() {
             type="button"
             data-command-trigger
             aria-label="Search"
-            className="md:hidden p-2 text-[#52525B] hover:bg-[#F4F4F5] rounded-full transition-colors cursor-pointer"
+            className="md:hidden p-2 text-[#4B5563] hover:bg-white rounded-full transition-colors cursor-pointer"
           >
             <Search size={19} />
           </button>
@@ -109,7 +117,7 @@ export function Navbar() {
           {/* Bookmarks Icon */}
           <Link
             href="/#wall"
-            className="relative p-2 text-[#52525B] hover:text-black hover:bg-[#F4F4F5] rounded-full transition-colors"
+            className="relative p-2 text-[#4B5563] hover:text-black hover:bg-white rounded-full transition-colors"
             title="Saved Bookmarks"
           >
             <Bookmark size={19} />
@@ -123,7 +131,7 @@ export function Navbar() {
           {/* Submit Portfolio CTA */}
           <Link
             href="/submit"
-            className="inline-flex items-center gap-1.5 bg-[#09090B] hover:bg-[#18181B] text-white text-xs sm:text-sm font-semibold px-4 py-2 sm:py-2.5 rounded-full shadow-xs hover:shadow-md transition-all active:scale-[0.98] border border-white/10"
+            className="inline-flex items-center gap-1.5 bg-black hover:bg-[#27272A] text-white text-xs sm:text-sm font-semibold px-4 py-2 sm:py-2.5 rounded-full shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
           >
             <Sparkles size={14} className="text-amber-300" />
             <span>Submit</span>

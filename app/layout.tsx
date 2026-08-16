@@ -6,33 +6,20 @@ import { QueryProvider } from "@/components/query-provider";
 import { CommandPalette } from "@/components/command-palette";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://devgallery.design"),
+  metadataBase: new URL("https://wallofportfolios.in"),
   title: {
-    default: "DevGallery — The Curated Gallery of High-Craft Developer & Designer Portfolios",
-    template: "%s | DevGallery",
+    default: "Wall of Portfolios — Discover Top Developer & Designer Portfolios",
+    template: "%s | Wall of Portfolios",
   },
   description:
-    "DevGallery is a curated index of the world's most creative, minimal, and high-craft developer & designer portfolios. Explore live websites, tech stacks, and source code.",
-  openGraph: {
-    type: "website",
-    siteName: "DevGallery",
-    title: "DevGallery — The Curated Gallery of Developer & Designer Portfolios",
-    description:
-      "Explore curated design engineering portfolios, real-time live site previews, and tech stacks.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "DevGallery",
-    description:
-      "Explore curated design engineering portfolios, real-time live site previews, and tech stacks.",
-  },
+    "Wall of Portfolios is a curated index of the world's best designer and developer portfolios.",
   robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#FFFFFF] text-[#09090B] font-sans antialiased selection:bg-black selection:text-white">
+      <body className="min-h-screen flex flex-col bg-[#ECEEF2] text-[#111827] font-sans antialiased selection:bg-black selection:text-white">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
