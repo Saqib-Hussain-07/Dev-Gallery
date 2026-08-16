@@ -29,7 +29,7 @@ export function SidebarNav() {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col items-center w-20 shrink-0 py-6 border-r border-white/[0.07] bg-[#0F1117]/80 backdrop-blur-md sticky top-[68px] h-[calc(100vh-68px)] z-30">
+    <aside className="hidden lg:flex flex-col items-center w-20 shrink-0 py-6 border-r border-[#E5E7EB] bg-white sticky top-[68px] h-[calc(100vh-68px)] z-30">
       <nav className="flex flex-col items-center gap-6 w-full px-2" aria-label="App Navigation">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -37,17 +37,17 @@ export function SidebarNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center gap-1.5 w-full py-2.5 px-1 rounded-2xl text-center transition-all group ${
+              className={`flex flex-col items-center gap-1.5 w-full py-2.5 px-1 rounded-xl text-center transition-all group ${
                 item.isActive
-                  ? "text-[#F8FAFC] font-semibold bg-[#171922] border border-white/[0.1] shadow-md"
-                  : "text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#171922]/60"
+                  ? "text-[#111827] font-semibold bg-[#F3F4F6]"
+                  : "text-[#6B7280] hover:text-[#111827] hover:bg-[#F9FAFB]"
               }`}
             >
               <div
                 className={`p-2 rounded-xl transition-all ${
                   item.isActive
-                    ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
-                    : "text-[#64748B] group-hover:text-indigo-300 group-hover:scale-110"
+                    ? "bg-[#111827] text-white shadow-xs"
+                    : "text-[#4B5563] group-hover:text-black group-hover:scale-110"
                 }`}
               >
                 <Icon size={18} />
