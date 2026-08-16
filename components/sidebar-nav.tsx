@@ -2,42 +2,44 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Github } from "lucide-react";
-
-/**
- * Sidebar Navigation Item Configuration
- */
-interface NavigationItem {
-  href: string;
-  label: string;
-  icon: typeof Home;
-  isExternal?: boolean;
-}
-
-const PRIMARY_NAVIGATION_ITEMS: NavigationItem[] = [
-  {
-    href: "/",
-    label: "Portfolios",
-    icon: Home,
-  },
-  {
-    href: "https://github.com/Saqib-Hussain-07/Wallfolio",
-    label: "GitHub",
-    icon: Github,
-    isExternal: true,
-  },
-];
+import { useState, useEffect, useCallback } from "react";
+import { Home, Bookmark } from "lucide-react";
 
 /**
  * SidebarNav Component
  *
  * Fixed desktop sidebar navigation pinned to the left of the viewport.
  * Features:
- * - Direct routing to primary gallery
- * - Direct link to official Wallfolio repository
+ * - "Portfolios" home gallery launcher
+ * - "Bookmarks" launcher with reactive saved count badge
  */
 export function SidebarNav() {
   const currentPathname = usePathname();
+  const [savedBookmarkCount, setSavedBookmarkCount] = useState<number>(0);
+
+  const handleSyncBookmarkCount = useCallback(() => {
+    try {
+      const stored = localStorage.getItem("wop_bookmarks");
+      if (stored) {
+        const parsedList: string[] = JSON.parse(stored);
+        setSavedBookmarkCount(Array.isArray(parsedList) ? parsedList.length : 0);
+      } else {
+        setSavedBookmarkCount(0);
+      }
+    } catch {
+      setSavedBookmarkCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    handleSyncBookmarkCount();
+    window.addEventListener("wop_bookmarks_updated", handleSyncBookmarkCount);
+    window.addEventListener("storage", handleSyncBookmarkCount);
+    return () => {
+      window.removeEventListener("wop_bookmarks_updated", handleSyncBookmarkCount);
+      window.removeEventListener("storage", handleSyncBookmarkCount);
+    };
+  }, [handleSyncBookmarkCount]);
 
   return (
     <aside
@@ -45,64 +47,56 @@ export function SidebarNav() {
       className="app-sidebar-fixed hidden lg:flex flex-col items-center w-18 shrink-0 py-4.5 bg-[#E2E4E9] fixed top-14 left-0 h-[calc(100vh-56px)] z-30 border-r border-[#D0D3DC]/40"
     >
       <nav className="sidebar-nav-container flex flex-col items-center gap-4 w-full px-1.5" aria-label="Main Navigation">
-        {PRIMARY_NAVIGATION_ITEMS.map((item) => {
-          const Icon = item.icon;
-          const isItemActive = !item.isExternal && currentPathname === item.href;
+        {/* 1. Portfolios Home */}
+        <Link
+          href="/"
+          title="All Portfolios"
+          aria-current={currentPathname === "/" ? "page" : undefined}
+          className={`nav-item-link flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl ${
+            currentPathname === "/"
+              ? "nav-item-active text-black font-bold bg-white/60 shadow-2xs"
+              : "nav-item-inactive text-[#4B5563] hover:text-black hover:bg-white/40"
+          }`}
+        >
+          <div
+            className={`nav-item-icon-wrapper p-2 rounded-xl transition-all ${
+              currentPathname === "/"
+                ? "text-black"
+                : "text-[#4B5563] group-hover:text-black group-hover:scale-105"
+            }`}
+          >
+            <Home
+              size={20}
+              className={currentPathname === "/" ? "stroke-[2.5]" : "stroke-[1.75]"}
+              aria-hidden="true"
+            />
+          </div>
+          <span className="nav-item-label text-[11px] font-semibold tracking-tight">
+            Portfolios
+          </span>
+        </Link>
 
-          if (item.isExternal) {
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="View Wallfolio on GitHub"
-                className="nav-item-link flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl text-[#4B5563] hover:text-black hover:bg-white/40"
+        {/* 2. Saved Bookmarks */}
+        <Link
+          href="/#wall"
+          title={`Saved Bookmarks (${savedBookmarkCount})`}
+          className="nav-item-link relative flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl text-[#4B5563] hover:text-black hover:bg-white/40"
+        >
+          <div className="nav-item-icon-wrapper relative p-2 rounded-xl transition-all text-[#4B5563] group-hover:text-black group-hover:scale-105">
+            <Bookmark size={20} className="stroke-[1.75]" aria-hidden="true" />
+            {savedBookmarkCount > 0 && (
+              <span
+                role="status"
+                className="bookmark-count-badge absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-white text-[9px] font-bold shadow-xs animate-in zoom-in-50"
               >
-                <div className="nav-item-icon-wrapper p-2 rounded-xl transition-all text-[#4B5563] group-hover:text-black group-hover:scale-105">
-                  <Icon size={20} className="stroke-[1.75]" aria-hidden="true" />
-                </div>
-                <span className="nav-item-label text-[11px] font-semibold tracking-tight">
-                  {item.label}
-                </span>
-              </a>
-            );
-          }
-
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              title={item.label}
-              aria-current={isItemActive ? "page" : undefined}
-              className={`nav-item-link flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl ${
-                isItemActive
-                  ? "nav-item-active text-black font-bold bg-white/60 shadow-2xs"
-                  : "nav-item-inactive text-[#4B5563] hover:text-black hover:bg-white/40"
-              }`}
-            >
-              {/* Icon Container */}
-              <div
-                className={`nav-item-icon-wrapper p-2 rounded-xl transition-all ${
-                  isItemActive
-                    ? "text-black"
-                    : "text-[#4B5563] group-hover:text-black group-hover:scale-105"
-                }`}
-              >
-                <Icon
-                  size={20}
-                  className={isItemActive ? "stroke-[2.5]" : "stroke-[1.75]"}
-                  aria-hidden="true"
-                />
-              </div>
-
-              {/* Label */}
-              <span className="nav-item-label text-[11px] font-semibold tracking-tight">
-                {item.label}
+                {savedBookmarkCount}
               </span>
-            </Link>
-          );
-        })}
+            )}
+          </div>
+          <span className="nav-item-label text-[11px] font-semibold tracking-tight">
+            Bookmarks
+          </span>
+        </Link>
       </nav>
     </aside>
   );
