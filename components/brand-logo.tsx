@@ -10,7 +10,8 @@ interface BrandLogoProps {
 /**
  * DEV GALLERY Brand Logo
  *
- * Exact 1:1 authentic rendering of the user's DEV logo paired with GALLERY wordmark.
+ * Exact 1:1 authentic rendering of the user's DEV logo paired with GALLERY wordmark,
+ * optically balanced and shifted slightly down for optimal vertical alignment.
  */
 export function BrandLogo({
   size = "md",
@@ -26,7 +27,7 @@ export function BrandLogo({
   const current = dimensions[size];
 
   return (
-    <div className={`brand-logo-root flex items-center gap-2 group select-none cursor-pointer ${className}`}>
+    <div className={`brand-logo-root flex items-center gap-2 group select-none cursor-pointer translate-y-[2px] ${className}`}>
       {/* Authentic DEV Logo Mark */}
       <Image
         src="/dev-logo.png"
