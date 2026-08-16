@@ -3,37 +3,47 @@ import Image from "next/image";
 
 interface BrandLogoProps {
   size?: "sm" | "md" | "lg";
+  showText?: boolean;
   className?: string;
 }
 
 /**
- * DEV Brand Logo
+ * DEV GALLERY Brand Logo
  *
- * Exact 1:1 authentic rendering of the user's original DEV logo.
+ * Exact 1:1 authentic rendering of the user's DEV logo paired with GALLERY wordmark.
  */
 export function BrandLogo({
   size = "md",
+  showText = true,
   className = "",
 }: BrandLogoProps) {
   const dimensions = {
-    sm: { height: 22, width: 51 },
-    md: { height: 28, width: 64 },
-    lg: { height: 36, width: 83 },
+    sm: { height: 20, width: 46, text: "text-xs tracking-[0.16em]" },
+    md: { height: 25, width: 57, text: "text-sm tracking-[0.18em]" },
+    lg: { height: 32, width: 73, text: "text-base tracking-[0.2em]" },
   };
 
-  const { height, width } = dimensions[size];
+  const current = dimensions[size];
 
   return (
-    <div className={`brand-logo-root flex items-center group select-none ${className}`}>
+    <div className={`brand-logo-root flex items-center gap-2 group select-none cursor-pointer ${className}`}>
+      {/* Authentic DEV Logo Mark */}
       <Image
         src="/dev-logo.png"
         alt="DEV Logo"
-        width={width}
-        height={height}
+        width={current.width}
+        height={current.height}
         priority
         className="object-contain transition-transform duration-200 group-hover:scale-105"
-        style={{ height: `${height}px`, width: "auto" }}
+        style={{ height: `${current.height}px`, width: "auto" }}
       />
+
+      {/* GALLERY Wordmark */}
+      {showText && (
+        <span className={`font-black text-[#09090B] uppercase font-sans select-none leading-none pt-0.5 ${current.text}`}>
+          GALLERY
+        </span>
+      )}
     </div>
   );
 }
