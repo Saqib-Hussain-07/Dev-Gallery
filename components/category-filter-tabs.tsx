@@ -1,21 +1,17 @@
 "use client";
 
-import { SlidersHorizontal, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { CATEGORY_TABS } from "@/lib/mock-data";
 
 interface Props {
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
-  activeFilterCount: number;
-  onOpenFilterDialog: () => void;
   onOpenSearchModal: () => void;
 }
 
 export function CategoryFilterTabs({
   selectedCategory,
   onSelectCategory,
-  activeFilterCount,
-  onOpenFilterDialog,
   onOpenSearchModal,
 }: Props) {
   return (
@@ -42,33 +38,16 @@ export function CategoryFilterTabs({
           })}
         </div>
 
-        {/* Filter Trigger Button & Search Button */}
+        {/* Quick Search Button */}
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={onOpenFilterDialog}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
-              activeFilterCount > 0
-                ? "bg-black text-white border-black"
-                : "bg-white text-[#111827] border-[#E5E7EB] hover:border-[#9CA3AF]"
-            }`}
-          >
-            <SlidersHorizontal size={14} />
-            <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-white text-black text-[11px] font-bold flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
           <button
             type="button"
             onClick={onOpenSearchModal}
             aria-label="Open search dialog"
-            className="p-2 rounded-full bg-white border border-[#E5E7EB] text-[#4B5563] hover:text-black hover:border-[#9CA3AF] transition-colors"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#E5E7EB] text-[#4B5563] hover:text-black hover:border-[#9CA3AF] transition-colors text-xs font-semibold cursor-pointer shadow-2xs"
           >
-            <Search size={16} />
+            <Search size={14} />
+            <span className="hidden sm:inline">Search</span>
           </button>
         </div>
       </div>

@@ -8,83 +8,24 @@ import { CategoriesSection } from "@/components/categories-section";
 import { MostLikedStories } from "@/components/most-liked-stories";
 import { CategoryFilterTabs } from "@/components/category-filter-tabs";
 import { PortfolioCard } from "@/components/portfolio-card";
-import { FilterDialog } from "@/components/filter-dialog";
 import { SearchModal } from "@/components/search-modal";
 import { portfolios, getMostLikedPortfolios } from "@/lib/mock-data";
 
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [filters, setFilters] = useState<{
-    yoe: string[];
-    designation: string[];
-    country: string[];
-    openToWorkOnly: boolean;
-  }>({
-    yoe: [],
-    designation: [],
-    country: [],
-    openToWorkOnly: false,
-  });
 
   const mostLikedList = useMemo(() => getMostLikedPortfolios(8), []);
 
-  // Filter portfolios
+  // Filter portfolios by selected category
   const filteredPortfolios = useMemo(() => {
     return portfolios.filter((p) => {
-      // Category tab filter
       if (selectedCategory !== "all") {
-        if (p.primaryCategory !== selectedCategory) return false;
+        return p.primaryCategory === selectedCategory;
       }
-
-      // Open to work filter
-      if (filters.openToWorkOnly && !p.openToWork) {
-        return false;
-      }
-
-      // Country filter
-      if (filters.country.length > 0) {
-        if (!p.country || !filters.country.includes(p.country)) {
-          return false;
-        }
-      }
-
-      // Designation filter
-      if (filters.designation.length > 0) {
-        if (!p.designation || !filters.designation.includes(p.designation)) {
-          return false;
-        }
-      }
-
-      // Years of experience filter
-      if (filters.yoe.length > 0) {
-        const y = p.yearsOfExperience || 1;
-        const matchesYoe = filters.yoe.some((opt) => {
-          if (opt === "Less than 1 year") return y < 1;
-          if (opt === "1 year") return y === 1;
-          if (opt === "2 years") return y === 2;
-          if (opt === "3 years") return y === 3;
-          if (opt === "4 years") return y === 4;
-          if (opt === "5 years") return y === 5;
-          if (opt === "6 years") return y === 6;
-          if (opt === "7 years") return y === 7;
-          if (opt === "8 years") return y === 8;
-          if (opt === "10+ years") return y >= 10;
-          return false;
-        });
-        if (!matchesYoe) return false;
-      }
-
       return true;
     });
-  }, [selectedCategory, filters]);
-
-  const activeFilterCount =
-    filters.yoe.length +
-    filters.designation.length +
-    filters.country.length +
-    (filters.openToWorkOnly ? 1 : 0);
+  }, [selectedCategory]);
 
   return (
     <div className="flex w-full min-h-screen">
@@ -106,7 +47,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-sm sm:text-lg text-[#4B5563] mt-4 max-w-2xl font-normal leading-relaxed">
-            Explore handpicked portfolios, shipped work &amp; case studies from top builders.
+            Explore handpicked portfolios, live sites &amp; project showcases from top builders.
           </p>
 
           {/* Global Showcase Banner */}
@@ -117,10 +58,10 @@ export default function HomePage() {
               </div>
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-[#111827] leading-snug">
-                  Showcase your portfolio to designers &amp; recruiters worldwide
+                  Showcase your portfolio to builders &amp; recruiters worldwide
                 </h2>
                 <p className="text-xs text-[#6B7280] mt-0.5">
-                  Get indexed, reviewed, and discovered by teams hiring globally.
+                  Get indexed, reviewed, and discovered by teams globally.
                 </p>
               </div>
             </div>
@@ -137,7 +78,7 @@ export default function HomePage() {
         {/* EXPLORE TOP CATEGORIES */}
         <CategoriesSection />
 
-        {/* MOST LIKED PORTFOLIOS STORIES */}
+        {/* MOST LIKED PORTFOLIOS */}
         <MostLikedStories portfolios={mostLikedList} />
 
         {/* CURATED PORTFOLIOS WALL SECTION */}
@@ -148,79 +89,29 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {/* Sticky Category Tabs & Filter Trigger */}
+          {/* Sticky Category Tabs & Search Trigger */}
           <CategoryFilterTabs
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
-            activeFilterCount={activeFilterCount}
-            onOpenFilterDialog={() => setIsFilterDialogOpen(true)}
             onOpenSearchModal={() => setIsSearchModalOpen(true)}
           />
-
-          {/* Active Filter Chips */}
-          {activeFilterCount > 0 && (
-            <div className="flex items-center gap-2 flex-wrap py-3">
-              <span className="text-xs font-semibold text-[#6B7280]">Active Filters:</span>
-              {filters.openToWorkOnly && (
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
-                  Open to work
-                </span>
-              )}
-              {filters.country.map((c) => (
-                <span
-                  key={c}
-                  className="text-xs font-medium px-2.5 py-1 rounded-full bg-white text-[#374151] border border-[#E5E7EB]"
-                >
-                  {c}
-                </span>
-              ))}
-              {filters.designation.map((d) => (
-                <span
-                  key={d}
-                  className="text-xs font-medium px-2.5 py-1 rounded-full bg-white text-[#374151] border border-[#E5E7EB]"
-                >
-                  {d}
-                </span>
-              ))}
-              {filters.yoe.map((y) => (
-                <span
-                  key={y}
-                  className="text-xs font-medium px-2.5 py-1 rounded-full bg-white text-[#374151] border border-[#E5E7EB]"
-                >
-                  {y}
-                </span>
-              ))}
-              <button
-                type="button"
-                onClick={() =>
-                  setFilters({ yoe: [], designation: [], country: [], openToWorkOnly: false })
-                }
-                className="text-xs font-semibold text-[#6B7280] hover:text-black underline ml-1 cursor-pointer"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
 
           {/* Portfolio Grid */}
           <div className="pt-6">
             {filteredPortfolios.length === 0 ? (
               <div className="py-20 text-center bg-white rounded-3xl border border-[#E5E7EB] p-8">
                 <p className="text-base font-bold text-[#111827]">
-                  No portfolios match your current filters
+                  No portfolios found in this category
                 </p>
                 <p className="text-xs text-[#6B7280] mt-1 mb-4">
-                  Try clearing some filters or exploring another category tab.
+                  Explore all portfolios or switch category.
                 </p>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedCategory("all");
-                    setFilters({ yoe: [], designation: [], country: [], openToWorkOnly: false });
-                  }}
+                  onClick={() => setSelectedCategory("all")}
                   className="px-5 py-2 rounded-full bg-black text-white text-xs font-semibold cursor-pointer"
                 >
-                  Reset all filters
+                  View all portfolios
                 </button>
               </div>
             ) : (
@@ -233,18 +124,6 @@ export default function HomePage() {
           </div>
         </section>
       </div>
-
-      {/* Slide-over / Modal Filter Dialog */}
-      <FilterDialog
-        isOpen={isFilterDialogOpen}
-        onClose={() => setIsFilterDialogOpen(false)}
-        filters={filters}
-        onApplyFilters={setFilters}
-        onClearFilters={() =>
-          setFilters({ yoe: [], designation: [], country: [], openToWorkOnly: false })
-        }
-        matchingCount={filteredPortfolios.length}
-      />
 
       {/* Search Modal */}
       <SearchModal

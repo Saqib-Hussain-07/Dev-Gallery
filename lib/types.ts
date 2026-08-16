@@ -16,10 +16,10 @@ export interface Owner {
   displayName: string;
   avatarUrl: string;
   role: "MEMBER" | "VERIFIED" | "MODERATOR" | "ADMIN" | "RECRUITER";
+  githubUsername?: string;
   location?: string;
   bio?: string;
   skills?: string[];
-  githubUsername?: string;
   contactEmail?: string;
 }
 
@@ -58,7 +58,7 @@ export interface Project {
   published: boolean;
   order: number;
   source: ProjectSource;
-  overrides: string[]; // field names the owner has manually edited — protected from re-sync clobber
+  overrides: string[];
 }
 
 export interface CaseStudySummary {
@@ -78,7 +78,7 @@ export interface Portfolio {
   status: PortfolioStatus;
   discipline: Discipline[];
   coverImage: string;
-  qualityScore: number; // 0-100
+  qualityScore: number;
   aiSummary: string;
   viewCount: number;
   bookmarkCount: number;
@@ -89,11 +89,5 @@ export interface Portfolio {
   technologies: Technology[];
   caseStudies: CaseStudySummary[];
   testimonials: Testimonial[];
-
-  // Extended fields
-  country?: string;
-  yearsOfExperience?: number;
-  designation?: string;
-  openToWork?: boolean;
   styleCategory?: string;
 }

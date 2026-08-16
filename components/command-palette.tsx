@@ -78,7 +78,7 @@ export function CommandPalette() {
               .map((p) => (
                 <Command.Item
                   key={p.id}
-                  value={`${p.title} ${p.owner.displayName} ${p.tagline} ${p.designation}`}
+                  value={`${p.title} ${p.owner.displayName} ${p.tagline || ""} ${p.styleCategory || ""}`}
                   onSelect={() => go(`/portfolio/${p.slug}`)}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer text-sm text-[#111827] data-[selected=true]:bg-[#F3F4F6] transition-colors"
                 >

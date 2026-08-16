@@ -10,24 +10,22 @@ interface Props {
   onClose: () => void;
 }
 
-const TRENDING_ROLES = [
-  "Visual Designer",
-  "UI/UX Designer",
-  "Product Designer",
-  "Senior Frontend Engineer",
-  "Design Technologist",
-  "Design Engineer",
+const TRENDING_CATEGORIES = [
+  "Minimalist",
+  "Dark Theme",
+  "Interactive",
+  "Creative",
+  "Modern Layouts",
+  "Engineering",
 ];
 
-const TRENDING_SKILLS = [
-  "Design Systems",
+const TRENDING_STACK = [
   "Next.js",
+  "React",
   "Three.js",
-  "WebGL",
-  "Micro-interactions",
   "TypeScript",
-  "Figma",
   "Tailwind CSS",
+  "Framer Motion",
 ];
 
 export function SearchModal({ isOpen, onClose }: Props) {
@@ -41,10 +39,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
         return (
           p.owner.displayName.toLowerCase().includes(q) ||
           p.title.toLowerCase().includes(q) ||
-          p.designation?.toLowerCase().includes(q) ||
-          p.country?.toLowerCase().includes(q) ||
+          (p.tagline && p.tagline.toLowerCase().includes(q)) ||
           p.primaryCategory.toLowerCase().includes(q) ||
-          p.owner.skills?.some((s) => s.toLowerCase().includes(q))
+          (p.styleCategory && p.styleCategory.toLowerCase().includes(q)) ||
+          p.technologies.some((t) => t.name.toLowerCase().includes(q))
         );
       })
     : [];
@@ -67,7 +65,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search Portfolios, Roles or Skills..."
+            placeholder="Search Portfolios, Categories or Stack..."
             className="flex-1 text-sm sm:text-base text-[#111827] placeholder-[#9CA3AF] bg-transparent focus:outline-none"
             autoFocus
           />
@@ -99,7 +97,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                 <div className="py-12 text-center">
                   <p className="text-sm font-semibold text-[#374151]">No portfolios found</p>
                   <p className="text-xs text-[#6B7280] mt-1">
-                    Try searching with another role or skill keyword.
+                    Try searching with another category or keyword.
                   </p>
                 </div>
               ) : (
@@ -125,10 +123,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-[#111827] group-hover:text-black">
-                            {p.owner.displayName}
+                            {p.title || p.owner.displayName}
                           </p>
                           <p className="text-xs text-[#6B7280]">
-                            {p.designation} {p.country ? `· ${p.country}` : ""}
+                            {p.styleCategory || p.primaryCategory}
                           </p>
                         </div>
                       </div>
@@ -143,39 +141,39 @@ export function SearchModal({ isOpen, onClose }: Props) {
             </div>
           ) : (
             <>
-              {/* Trending Roles */}
+              {/* Trending Categories */}
               <div>
                 <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider mb-3">
-                  Trending Roles
+                  Trending Categories
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {TRENDING_ROLES.map((role) => (
+                  {TRENDING_CATEGORIES.map((cat) => (
                     <button
-                      key={role}
+                      key={cat}
                       type="button"
-                      onClick={() => setQuery(role)}
+                      onClick={() => setQuery(cat)}
                       className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
                     >
-                      {role}
+                      {cat}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Trending Skills */}
+              {/* Trending Tech Stack */}
               <div>
                 <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider mb-3">
-                  Trending Skills
+                  Trending Tech Stack
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {TRENDING_SKILLS.map((skill) => (
+                  {TRENDING_STACK.map((tech) => (
                     <button
-                      key={skill}
+                      key={tech}
                       type="button"
-                      onClick={() => setQuery(skill)}
+                      onClick={() => setQuery(tech)}
                       className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
                     >
-                      {skill}
+                      {tech}
                     </button>
                   ))}
                 </div>
