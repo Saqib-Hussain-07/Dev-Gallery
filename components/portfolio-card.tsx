@@ -8,6 +8,11 @@ import { Bookmark, ExternalLink, Github, Share2, Check } from "lucide-react";
 export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [imgSrc, setImgSrc] = useState(portfolio.coverImage);
+
+  useEffect(() => {
+    setImgSrc(portfolio.coverImage);
+  }, [portfolio.coverImage]);
 
   useEffect(() => {
     try {
@@ -126,11 +131,17 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
       >
         <Image
-          src={portfolio.coverImage}
+          src={imgSrc}
           alt={portfolio.title}
           fill
+          unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover group-hover/preview:scale-105 transition-transform duration-300"
+          onError={() => {
+            setImgSrc(
+              "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"
+            );
+          }}
         />
 
         {/* Hover Overlay with Live Link CTA */}
