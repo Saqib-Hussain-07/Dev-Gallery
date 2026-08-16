@@ -6,25 +6,25 @@ import { QueryProvider } from "@/components/query-provider";
 import { CommandPalette } from "@/components/command-palette";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://wallofportfolios.in"),
+  metadataBase: new URL("https://devgallery.design"),
   title: {
-    default: "Wall of Portfolios — Discover Top Developer & Designer Portfolios",
-    template: "%s | Wall of Portfolios",
+    default: "DevGallery — The Curated Gallery of High-Craft Developer & Designer Portfolios",
+    template: "%s | DevGallery",
   },
   description:
-    "Wall of Portfolios showcases the best design and engineering portfolios from UX, UI, product designers, and software engineers worldwide.",
+    "DevGallery is a curated index of the world's most creative, minimal, and high-craft developer & designer portfolios. Explore live websites, tech stacks, and source code.",
   openGraph: {
     type: "website",
-    siteName: "Wall of Portfolios",
-    title: "Wall of Portfolios — Discover Top Developer & Designer Portfolios",
+    siteName: "DevGallery",
+    title: "DevGallery — The Curated Gallery of Developer & Designer Portfolios",
     description:
-      "Explore most liked portfolios, creative and minimal designs, dark themes, and interactive projects.",
+      "Explore curated design engineering portfolios, real-time live site previews, and tech stacks.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wall of Portfolios",
+    title: "DevGallery",
     description:
-      "Explore most liked portfolios, creative and minimal designs, dark themes, and interactive projects.",
+      "Explore curated design engineering portfolios, real-time live site previews, and tech stacks.",
   },
   robots: { index: true, follow: true },
 };
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#FAFAFB] text-[#111827] font-sans antialiased">
+      <body className="min-h-screen flex flex-col bg-[#FAFAFB] text-[#09090B] font-sans antialiased selection:bg-black selection:text-white">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>

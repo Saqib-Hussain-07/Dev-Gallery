@@ -5,7 +5,12 @@ import { useState, useEffect } from "react";
 import { Portfolio } from "@/lib/types";
 import { Bookmark, ExternalLink, Github, Share2, Check } from "lucide-react";
 
-export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
+interface Props {
+  portfolio: Portfolio;
+  onSelectTech?: (techName: string) => void;
+}
+
+export function PortfolioCard({ portfolio, onSelectTech }: Props) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imgSrc, setImgSrc] = useState(portfolio.coverImage);
@@ -63,7 +68,6 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         setTimeout(() => setCopied(false), 2000);
       }
     } catch {
-      // fallback clipboard
       await navigator.clipboard.writeText(portfolio.url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -75,11 +79,11 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
     : `https://github.com/${portfolio.owner.username}`;
 
   return (
-    <div className="relative group rounded-2xl bg-white border border-[#E5E7EB] hover:border-[#9CA3AF] shadow-2xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col justify-between">
+    <div className="relative group rounded-2xl bg-white border border-[#E4E4E7] hover:border-black/30 shadow-2xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between ring-1 ring-black/5 hover:ring-black/10">
       {/* Top Floating Controls (Status, Bookmark & Share) */}
       <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
         {/* Status Badge with Live Pulse Dot */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase shadow-xs">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#09090B]/85 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase shadow-xs border border-white/10">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span>{portfolio.status === "LIVE" ? "LIVE" : portfolio.status}</span>
         </div>
@@ -93,7 +97,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
             onClick={handleShare}
             aria-label="Share portfolio link"
             title="Share portfolio"
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md hover:bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center text-[#4B5563] hover:text-black transition-all hover:scale-105 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md hover:bg-white shadow-xs border border-[#E4E4E7] flex items-center justify-center text-[#52525B] hover:text-black transition-all hover:scale-105 cursor-pointer"
           >
             {copied ? (
               <Check size={14} className="text-emerald-600" />
@@ -114,11 +118,11 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
           onClick={toggleBookmark}
           aria-label={isBookmarked ? "Remove bookmark" : "Bookmark portfolio"}
           title={isBookmarked ? "Bookmarked" : "Bookmark"}
-          className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md hover:bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center text-[#4B5563] hover:text-black transition-all hover:scale-105 cursor-pointer"
+          className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md hover:bg-white shadow-xs border border-[#E4E4E7] flex items-center justify-center text-[#52525B] hover:text-black transition-all hover:scale-105 cursor-pointer"
         >
           <Bookmark
             size={14}
-            className={isBookmarked ? "fill-black text-black" : "text-[#4B5563]"}
+            className={isBookmarked ? "fill-black text-black" : "text-[#52525B]"}
           />
         </button>
       </div>
@@ -128,7 +132,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         href={portfolio.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block relative aspect-16/10 w-full overflow-hidden bg-[#F3F4F6] group/preview"
+        className="block relative aspect-16/10 w-full overflow-hidden bg-[#F4F4F5] group/preview"
         title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
       >
         <Image
@@ -137,7 +141,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
           fill
           unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover group-hover/preview:scale-105 transition-transform duration-300"
+          className="object-cover group-hover/preview:scale-106 transition-transform duration-500 ease-out"
           onError={() => {
             setImgSrc(
               "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"
@@ -146,8 +150,8 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         />
 
         {/* Hover Overlay with Live Link CTA */}
-        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-black text-xs font-bold shadow-xl backdrop-blur-xs">
+        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+          <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#09090B] text-xs font-bold shadow-xl backdrop-blur-xs hover:scale-105 transition-transform">
             <span>Visit Live Portfolio</span>
             <ExternalLink size={13} />
           </span>
@@ -159,29 +163,38 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         {/* Developer Name & Style Category */}
         <div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-bold text-base text-[#111827] group-hover:text-black leading-tight truncate">
+            <h3 className="font-bold text-base text-[#09090B] group-hover:text-violet-950 leading-tight truncate">
               {portfolio.owner.displayName}
             </h3>
 
             {portfolio.styleCategory && (
-              <span className="text-[10px] font-semibold text-[#4B5563] bg-[#F3F4F6] px-2.5 py-0.5 rounded-full shrink-0">
+              <span className="text-[10px] font-semibold text-[#52525B] bg-[#F4F4F5] px-2.5 py-0.5 rounded-full shrink-0 border border-[#E4E4E7]/60">
                 {portfolio.styleCategory}
               </span>
             )}
           </div>
 
-          {/* Technology Badges */}
+          {/* Clickable Technology Badges */}
           <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
             {portfolio.technologies.slice(0, 3).map((tech) => (
-              <span
+              <button
                 key={tech.id}
-                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F9FAFB] text-[#374151] border border-[#E5E7EB]"
+                type="button"
+                onClick={(e) => {
+                  if (onSelectTech) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelectTech(tech.name);
+                  }
+                }}
+                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F4F4F5] text-[#3F3F46] hover:text-black hover:bg-[#E4E4E7] border border-[#E4E4E7] transition-colors cursor-pointer"
+                title={`Filter by ${tech.name}`}
               >
                 {tech.name}
-              </span>
+              </button>
             ))}
             {portfolio.technologies.length > 3 && (
-              <span className="text-[10px] text-[#6B7280] font-medium">
+              <span className="text-[10px] text-[#71717A] font-medium">
                 +{portfolio.technologies.length - 3}
               </span>
             )}
@@ -189,14 +202,14 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
         </div>
 
         {/* Card Footer: Action Links (GitHub Link & Portfolio Live Link) */}
-        <div className="pt-3 border-t border-[#F0F1F3] flex items-center justify-between gap-2">
+        <div className="pt-3 border-t border-[#F4F4F5] flex items-center justify-between gap-2">
           {/* GitHub Profile Link */}
           <a
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             title={`View ${portfolio.owner.displayName}'s GitHub`}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#4B5563] hover:text-black p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#52525B] hover:text-black p-1.5 rounded-lg hover:bg-[#F4F4F5] transition-colors"
           >
             <Github size={15} />
             <span className="text-[11px] font-semibold">GitHub</span>
@@ -208,7 +221,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
             target="_blank"
             rel="noopener noreferrer"
             title="Open live portfolio in new tab"
-            className="inline-flex items-center gap-1 text-xs font-bold text-white bg-black hover:bg-[#27272A] px-3.5 py-1.5 rounded-full shadow-2xs transition-all hover:scale-102 active:scale-98"
+            className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#09090B] hover:bg-[#18181B] px-3.5 py-1.5 rounded-full shadow-2xs transition-all hover:scale-102 active:scale-98 border border-white/10"
           >
             <span>Live site</span>
             <ExternalLink size={12} />
