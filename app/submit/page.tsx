@@ -36,7 +36,8 @@ export default function SubmitPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-16">
+    <div className="flex-1 w-full min-h-screen bg-[#E2E4E9] py-8 px-4 sm:px-6">
+      <div className="max-w-2xl mx-auto px-6 sm:px-8 py-12 bg-white rounded-3xl border border-[#D0D3DC] shadow-xs">
       <span className="font-mono text-xs uppercase tracking-[0.2em] text-signal">Submit</span>
       <h1 className="font-display text-4xl mt-3 mb-3">List your work on the wall</h1>
       <p className="text-ink-soft mb-10 leading-relaxed">
@@ -169,6 +170,7 @@ export default function SubmitPage() {
           </Button>
         </form>
       )}
+      </div>
     </div>
   );
 }

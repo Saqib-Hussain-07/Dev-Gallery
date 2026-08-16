@@ -84,7 +84,8 @@ export default async function PortfolioDetailPage({
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="flex-1 w-full min-h-screen bg-[#E2E4E9] py-8 px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-6 sm:px-10 py-10 bg-white rounded-3xl border border-[#D0D3DC] shadow-xs">
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <script
         type="application/ld+json"
@@ -269,6 +270,7 @@ export default async function PortfolioDetailPage({
           </div>
         </section>
       )}
+      </div>
     </div>
   );
 }

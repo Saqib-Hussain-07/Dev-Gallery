@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, BookOpen, Kanban } from "lucide-react";
+import { Home, Kanban } from "lucide-react";
 
 export function SidebarNav() {
   const pathname = usePathname();
@@ -15,18 +15,6 @@ export function SidebarNav() {
       isActive: pathname === "/",
     },
     {
-      href: "/#categories",
-      label: "Studio",
-      icon: Layers,
-      isActive: false,
-    },
-    {
-      href: "/#wall",
-      label: "Cases",
-      icon: BookOpen,
-      isActive: false,
-    },
-    {
       href: "/portfolio/paco-coursey/admin",
       label: "Tracker",
       icon: Kanban,
@@ -35,7 +23,7 @@ export function SidebarNav() {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col items-center w-18 shrink-0 py-4.5 bg-[#E2E4E9] sticky top-14 h-[calc(100vh-56px)] z-30">
+    <aside className="hidden lg:flex flex-col items-center w-18 shrink-0 py-4.5 bg-[#E2E4E9] fixed top-14 left-0 h-[calc(100vh-56px)] z-30 border-r border-[#D0D3DC]/40">
       <nav className="flex flex-col items-center gap-4 w-full px-1.5" aria-label="Main Navigation">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -44,10 +32,10 @@ export function SidebarNav() {
               key={item.label}
               href={item.href}
               title={item.label}
-              className={`flex flex-col items-center gap-1 w-full py-1.5 px-1 text-center transition-all group ${
+              className={`flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl ${
                 item.isActive
-                  ? "text-black font-bold"
-                  : "text-[#4B5563] hover:text-black"
+                  ? "text-black font-bold bg-white/60 shadow-2xs"
+                  : "text-[#4B5563] hover:text-black hover:bg-white/40"
               }`}
             >
               <div
