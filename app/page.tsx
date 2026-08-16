@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { SidebarNav } from "@/components/sidebar-nav";
 import { CategoriesSection } from "@/components/categories-section";
 import { MostLikedStories } from "@/components/most-liked-stories";
 import { CategoryFilterTabs } from "@/components/category-filter-tabs";
@@ -10,7 +9,7 @@ import { SearchModal } from "@/components/search-modal";
 import { PortfolioCardSkeleton } from "@/components/ui/skeleton";
 import { portfolios as staticFallbackPortfolios } from "@/lib/mock-data";
 import { Portfolio } from "@/lib/types";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Bookmark } from "lucide-react";
 
 const INITIAL_PAGE_SIZE = 24;
 const PAGE_INCREMENT = 24;
@@ -18,19 +17,20 @@ const PAGE_INCREMENT = 24;
 /**
  * HomePage Component
  *
- * Dynamically synchronized with Saqib-Hussain-07/Wallfolio repository.
+ * Clean, full-width curated gallery synchronized with Saqib-Hussain-07/Wallfolio.
  * Features:
- * - 1,900+ Live verified developer portfolios parsed in real-time
+ * - 1,940+ Live developer portfolios parsed in real-time
+ * - 100% No-login bookmarks filter (using localStorage)
  * - Smooth Infinite Scrolling with IntersectionObserver
  * - Shimmering skeleton placeholders matching Wall of Portfolios aesthetic
  * - Category filter tabs & grid view switcher (Bento vs Dense)
- * - Community spotlight top-rated rail
  */
 export default function HomePage() {
   /* -------------------------------------------------------------------------- */
   /* State & Data Sync                                                          */
   /* -------------------------------------------------------------------------- */
   const [allPortfolios, setAllPortfolios] = useState<Portfolio[]>(staticFallbackPortfolios);
+  const [savedBookmarkIds, setSavedBookmarkIds] = useState<string[]>([]);
   const [isLoadingInitial, setIsLoadingInitial] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -40,6 +40,31 @@ export default function HomePage() {
 
   // Sentinel ref for infinite scroll trigger
   const infiniteScrollSentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Sync localStorage bookmarks (100% client-side, zero login required)
+  const syncLocalBookmarks = useCallback(() => {
+    try {
+      const stored = localStorage.getItem("wop_bookmarks");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setSavedBookmarkIds(Array.isArray(parsed) ? parsed : []);
+      } else {
+        setSavedBookmarkIds([]);
+      }
+    } catch {
+      setSavedBookmarkIds([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    syncLocalBookmarks();
+    window.addEventListener("wop_bookmarks_updated", syncLocalBookmarks);
+    window.addEventListener("storage", syncLocalBookmarks);
+    return () => {
+      window.removeEventListener("wop_bookmarks_updated", syncLocalBookmarks);
+      window.removeEventListener("storage", syncLocalBookmarks);
+    };
+  }, [syncLocalBookmarks]);
 
   // Fetch live Wallfolio dataset on initial mount
   useEffect(() => {
@@ -76,15 +101,19 @@ export default function HomePage() {
     return allPortfolios.slice(0, 8);
   }, [allPortfolios]);
 
-  // Filtered dataset according to category
+  // Filtered dataset according to category or saved bookmarks
   const filteredPortfolios = useMemo(() => {
-    return allPortfolios.filter((portfolio) => {
-      if (selectedCategory !== "all") {
-        return portfolio.primaryCategory === selectedCategory;
-      }
-      return true;
-    });
-  }, [allPortfolios, selectedCategory]);
+    if (selectedCategory === "bookmarks") {
+      const bookmarkSet = new Set(savedBookmarkIds);
+      return allPortfolios.filter(
+        (p) => bookmarkSet.has(p.id) || bookmarkSet.has(p.slug)
+      );
+    }
+    if (selectedCategory !== "all") {
+      return allPortfolios.filter((p) => p.primaryCategory === selectedCategory);
+    }
+    return allPortfolios;
+  }, [allPortfolios, selectedCategory, savedBookmarkIds]);
 
   // Sliced paginated subset for rendering
   const paginatedPortfolios = useMemo(() => {
@@ -119,7 +148,7 @@ export default function HomePage() {
           handleLoadNextBatch();
         }
       },
-      { rootMargin: "400px" } // Trigger 400px before reaching the bottom
+      { rootMargin: "400px" }
     );
 
     observer.observe(sentinel);
@@ -132,13 +161,10 @@ export default function HomePage() {
   /* Render                                                                     */
   /* -------------------------------------------------------------------------- */
   return (
-    <div className="home-layout-wrapper flex w-full min-h-screen bg-[#E2E4E9]">
-      {/* Fixed Left Sidebar Navigation */}
-      <SidebarNav />
-
-      {/* Main Content Card on Grey Shell */}
-      <main className="main-content-card flex-1 w-full min-w-0 lg:ml-18 px-4 sm:px-8 py-6 sm:py-8 bg-white rounded-tl-[24px] sm:rounded-tl-[28px] border-t border-l border-[#D0D3DC] shadow-xs">
-        <div className="content-inner-container max-w-7xl mx-auto">
+    <div className="home-layout-wrapper flex flex-col w-full min-h-screen bg-[#E2E4E9]">
+      {/* Main Full-Width Content Container */}
+      <main className="main-content-card flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
+        <div className="content-inner-container w-full bg-white rounded-3xl border border-[#D0D3DC] p-4 sm:p-8 shadow-xs">
           {/* ================================================================= */}
           {/* 1. HERO SECTION                                                  */}
           {/* ================================================================= */}
@@ -181,7 +207,7 @@ export default function HomePage() {
               <div className="metric-divider w-px h-8 bg-[#E4E4E7]" />
               <div className="metric-item">
                 <p className="metric-value text-lg sm:text-xl font-extrabold text-[#09090B]">Zero Gate</p>
-                <p className="metric-label text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Instant Showcase</p>
+                <p className="metric-label text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Instant Discovery</p>
               </div>
             </div>
           </section>
@@ -199,12 +225,12 @@ export default function HomePage() {
           {/* ================================================================= */}
           {/* 4. CURATED PORTFOLIO WALL & INFINITE SCROLL GRID                 */}
           {/* ================================================================= */}
-          <section id="wall" className="portfolio-wall-section pt-8 pb-20">
+          <section id="wall" className="portfolio-wall-section pt-8 pb-10">
             {/* Section Header */}
             <header className="wall-section-header flex items-center justify-between mb-2">
               <div>
                 <h2 className="wall-title text-xl sm:text-2xl font-extrabold text-[#09090B] tracking-tight">
-                  Curated Developer Portfolios
+                  {selectedCategory === "bookmarks" ? "Your Saved Bookmarks" : "Curated Developer Portfolios"}
                 </h2>
                 <p className="wall-subtitle text-xs text-[#71717A] font-medium">
                   Showing {paginatedPortfolios.length} of {filteredPortfolios.length.toLocaleString()} portfolios
@@ -212,7 +238,7 @@ export default function HomePage() {
               </div>
             </header>
 
-            {/* Sticky Category Tabs with Higher Z-Index & View Mode Toggle */}
+            {/* Sticky Category Tabs with View Mode Toggle */}
             <CategoryFilterTabs
               selectedCategory={selectedCategory}
               onSelectCategory={(category) => setSelectedCategory(category)}
@@ -239,19 +265,42 @@ export default function HomePage() {
               ) : filteredPortfolios.length === 0 ? (
                 /* Empty Filter Result State */
                 <div className="empty-filter-state py-20 text-center bg-white rounded-3xl border border-[#E4E4E7] p-8 shadow-xs">
-                  <p className="text-base font-bold text-[#09090B]">
-                    No portfolios match this category
-                  </p>
-                  <p className="text-xs text-[#71717A] mt-1 mb-4">
-                    Explore all portfolios or switch category.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCategory("all")}
-                    className="btn-reset-filters px-5 py-2 rounded-full bg-[#09090B] text-white text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#18181B] transition-colors"
-                  >
-                    View all portfolios
-                  </button>
+                  {selectedCategory === "bookmarks" ? (
+                    <div className="flex flex-col items-center">
+                      <div className="p-3 bg-[#F3F4F6] rounded-full mb-3">
+                        <Bookmark size={20} className="text-[#6B7280]" />
+                      </div>
+                      <p className="text-base font-bold text-[#09090B]">
+                        No saved bookmarks yet
+                      </p>
+                      <p className="text-xs text-[#71717A] mt-1 mb-4 max-w-sm">
+                        Click the bookmark icon on any portfolio card to save it here for later. No login or account required!
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCategory("all")}
+                        className="btn-reset-filters px-5 py-2 rounded-full bg-[#09090B] text-white text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#18181B] transition-colors"
+                      >
+                        Explore all portfolios
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-base font-bold text-[#09090B]">
+                        No portfolios match this category
+                      </p>
+                      <p className="text-xs text-[#71717A] mt-1 mb-4">
+                        Explore all portfolios or switch category.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCategory("all")}
+                        className="btn-reset-filters px-5 py-2 rounded-full bg-[#09090B] text-white text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#18181B] transition-colors"
+                      >
+                        View all portfolios
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* Dynamic Portfolio Grid with Infinite Scroll */

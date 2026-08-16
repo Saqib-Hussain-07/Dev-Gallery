@@ -1,6 +1,7 @@
 "use client";
 
-import { Search, LayoutGrid, Grid3X3 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Search, LayoutGrid, Grid3X3, Bookmark } from "lucide-react";
 import { CATEGORY_TABS } from "@/lib/mock-data";
 
 /**
@@ -18,7 +19,8 @@ interface CategoryFilterTabsProps {
  * CategoryFilterTabs Component
  *
  * Sticky horizontal control bar containing:
- * - Filter pills for categories (Minimalist, Dark Theme, 3D/WebGL, etc.)
+ * - Filter pills for categories (All, Minimalist, Dark Theme, 3D/WebGL, etc.)
+ * - Saved Bookmarks filter pill with real-time count badge
  * - Grid density toggle (3-column Bento vs 4-column Dense)
  * - Quick search modal launcher button
  */
@@ -29,6 +31,32 @@ export function CategoryFilterTabs({
   onToggleViewMode,
   onOpenSearchModal,
 }: CategoryFilterTabsProps) {
+  const [bookmarkCount, setBookmarkCount] = useState<number>(0);
+
+  const syncBookmarkCount = useCallback(() => {
+    try {
+      const stored = localStorage.getItem("wop_bookmarks");
+      if (stored) {
+        const parsed: string[] = JSON.parse(stored);
+        setBookmarkCount(Array.isArray(parsed) ? parsed.length : 0);
+      } else {
+        setBookmarkCount(0);
+      }
+    } catch {
+      setBookmarkCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    syncBookmarkCount();
+    window.addEventListener("wop_bookmarks_updated", syncBookmarkCount);
+    window.addEventListener("storage", syncBookmarkCount);
+    return () => {
+      window.removeEventListener("wop_bookmarks_updated", syncBookmarkCount);
+      window.removeEventListener("storage", syncBookmarkCount);
+    };
+  }, [syncBookmarkCount]);
+
   return (
     <div className="sticky-filter-toolbar sticky top-14 z-30 bg-white py-3.5 border-b border-[#E4E4E7] shadow-2xs transition-all">
       <div className="filter-toolbar-container flex items-center justify-between gap-3">
@@ -55,6 +83,29 @@ export function CategoryFilterTabs({
               </button>
             );
           })}
+
+          {/* Bookmarks Filter Pill (Works 100% without login via localStorage) */}
+          <button
+            type="button"
+            onClick={() => onSelectCategory("bookmarks")}
+            aria-pressed={selectedCategory === "bookmarks"}
+            title="View saved bookmarked portfolios"
+            className={`category-pill-button flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+              selectedCategory === "bookmarks"
+                ? "category-pill-selected bg-[#09090B] text-white shadow-xs"
+                : "category-pill-unselected bg-white text-[#52525B] hover:text-[#09090B] border border-[#E4E4E7] hover:border-[#D4D4D8]"
+            }`}
+          >
+            <Bookmark size={12} className={selectedCategory === "bookmarks" ? "fill-white text-white" : "text-[#71717A]"} />
+            <span>Saved Bookmarks</span>
+            {bookmarkCount > 0 && (
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                selectedCategory === "bookmarks" ? "bg-white text-black" : "bg-[#F3F4F6] text-black"
+              }`}>
+                {bookmarkCount}
+              </span>
+            )}
+          </button>
         </nav>
 
         {/* --- Right Controls: View Switcher & Search Button --- */}
