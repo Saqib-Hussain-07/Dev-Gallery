@@ -91,7 +91,7 @@ export function Navbar() {
   /* -------------------------------------------------------------------------- */
   return (
     <header className="app-navbar sticky top-0 z-40 bg-[#E2E4E9] border-b border-[#D0D3DC] transition-all">
-      <div className="navbar-container max-w-[1700px] mx-auto px-4 sm:px-8 flex items-center justify-between h-13 sm:h-14 gap-3">
+      <div className="navbar-container max-w-[1920px] mx-auto px-3 sm:px-6 flex items-center justify-between h-13 sm:h-14 gap-3">
         {/* --- Section: Brand Logo --- */}
         <div className="navbar-brand-section flex items-center shrink-0">
           <Link

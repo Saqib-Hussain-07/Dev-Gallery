@@ -164,14 +164,14 @@ export default function HomePage() {
   return (
     <div className="home-layout-wrapper flex flex-col w-full min-h-screen bg-[#E2E4E9]">
       {/* Main Expansive Content Container */}
-      <main className="main-content-card flex-1 w-full max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="content-inner-container w-full bg-white rounded-2xl sm:rounded-3xl border border-[#D0D3DC] px-4 sm:px-8 lg:px-10 py-6 sm:py-8 shadow-xs">
+      <main className="main-content-card flex-1 w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-5">
+        <div className="content-inner-container w-full bg-white rounded-2xl sm:rounded-3xl border border-[#D0D3DC] px-3 sm:px-6 lg:px-8 pt-3 sm:pt-5 pb-6 shadow-xs">
           {/* ================================================================= */}
           {/* 1. HERO SECTION                                                  */}
           {/* ================================================================= */}
-          <section className="hero-section text-center pt-4 sm:pt-8 pb-4 flex flex-col items-center">
+          <section className="hero-section text-center pt-2 sm:pt-4 pb-3 flex flex-col items-center">
             {/* Live Repository Sync Ticker */}
-            <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-5 shadow-2xs">
+            <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-3 shadow-2xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
