@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Kanban } from "lucide-react";
+import { Home, Github } from "lucide-react";
 
 /**
  * Sidebar Navigation Item Configuration
@@ -11,7 +11,7 @@ interface NavigationItem {
   href: string;
   label: string;
   icon: typeof Home;
-  matchPrefix?: string;
+  isExternal?: boolean;
 }
 
 const PRIMARY_NAVIGATION_ITEMS: NavigationItem[] = [
@@ -21,10 +21,10 @@ const PRIMARY_NAVIGATION_ITEMS: NavigationItem[] = [
     icon: Home,
   },
   {
-    href: "/portfolio/paco-coursey/admin",
-    label: "Tracker",
-    icon: Kanban,
-    matchPrefix: "/admin",
+    href: "https://github.com/Saqib-Hussain-07/Wallfolio",
+    label: "GitHub",
+    icon: Github,
+    isExternal: true,
   },
 ];
 
@@ -33,9 +33,8 @@ const PRIMARY_NAVIGATION_ITEMS: NavigationItem[] = [
  *
  * Fixed desktop sidebar navigation pinned to the left of the viewport.
  * Features:
- * - Direct routing to primary gallery & tracker views
- * - Active route styling with rounded backdrop pill
- * - Smooth icon hover animations
+ * - Direct routing to primary gallery
+ * - Direct link to official Wallfolio repository
  */
 export function SidebarNav() {
   const currentPathname = usePathname();
@@ -48,9 +47,27 @@ export function SidebarNav() {
       <nav className="sidebar-nav-container flex flex-col items-center gap-4 w-full px-1.5" aria-label="Main Navigation">
         {PRIMARY_NAVIGATION_ITEMS.map((item) => {
           const Icon = item.icon;
-          const isItemActive = item.matchPrefix
-            ? currentPathname.includes(item.matchPrefix)
-            : currentPathname === item.href;
+          const isItemActive = !item.isExternal && currentPathname === item.href;
+
+          if (item.isExternal) {
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="View Wallfolio on GitHub"
+                className="nav-item-link flex flex-col items-center gap-1 w-full py-2 px-1 text-center transition-all group rounded-xl text-[#4B5563] hover:text-black hover:bg-white/40"
+              >
+                <div className="nav-item-icon-wrapper p-2 rounded-xl transition-all text-[#4B5563] group-hover:text-black group-hover:scale-105">
+                  <Icon size={20} className="stroke-[1.75]" aria-hidden="true" />
+                </div>
+                <span className="nav-item-label text-[11px] font-semibold tracking-tight">
+                  {item.label}
+                </span>
+              </a>
+            );
+          }
 
           return (
             <Link

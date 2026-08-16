@@ -187,15 +187,6 @@ export function Navbar() {
               </span>
             )}
           </Link>
-
-          {/* Submit Portfolio CTA */}
-          <Link
-            href="/submit"
-            className="btn-submit-cta inline-flex items-center gap-1 bg-black hover:bg-[#27272A] text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
-          >
-            <Sparkles size={12} className="text-amber-300" aria-hidden="true" />
-            <span>Submit</span>
-          </Link>
         </nav>
       </div>
     </header>
