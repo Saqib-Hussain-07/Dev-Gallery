@@ -1,5 +1,74 @@
 [
   {
+    "id": "wallfolio-itsvg",
+    "primaryCategory": "interactive",
+    "styleCategory": "AI & Interactive",
+    "slug": "vivek-gupta-itsvg",
+    "url": "https://itsvg.in",
+    "title": "Vivek Gupta — Portfolio",
+    "tagline": "Software Engineer & Open Source Builder",
+    "description": "Personal website & developer portfolio of Vivek Gupta (itsvg).",
+    "owner": {
+      "username": "itsvg",
+      "displayName": "Vivek Gupta",
+      "githubUsername": "itsvg",
+      "avatarUrl": "https://avatar.vercel.sh/itsvg.png",
+      "role": "MEMBER",
+      "bio": "Software Engineer & Builder",
+      "skills": [
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS"
+      ]
+    },
+    "status": "LIVE",
+    "discipline": [
+      "ENGINEERING"
+    ],
+    "coverImage": "https://s0.wp.com/mshots/v1/https%3A%2F%2Fitsvg.in?w=640&h=400",
+    "qualityScore": 99,
+    "aiSummary": "Featured developer portfolio of Vivek Gupta: https://itsvg.in",
+    "viewCount": 2450,
+    "bookmarkCount": 142,
+    "likes": {
+      "day": 18,
+      "week": 85,
+      "month": 320,
+      "allTime": 1250
+    },
+    "technologies": [
+      {
+        "id": "react",
+        "name": "React",
+        "category": "FRAMEWORK",
+        "source": "SELF_DECLARED"
+      },
+      {
+        "id": "nextjs",
+        "name": "Next.js",
+        "category": "FRAMEWORK",
+        "source": "SELF_DECLARED"
+      },
+      {
+        "id": "typescript",
+        "name": "TypeScript",
+        "category": "LANGUAGE",
+        "source": "SELF_DECLARED"
+      },
+      {
+        "id": "tailwindcss",
+        "name": "Tailwind CSS",
+        "category": "LIBRARY",
+        "source": "SELF_DECLARED"
+      }
+    ],
+    "caseStudies": [],
+    "testimonials": [],
+    "verifiedAt": "2026-08-16T18:16:34.479Z",
+    "createdAt": "2026-08-16T18:16:34.480Z"
+  },
+  {
     "id": "wallfolio-1",
     "slug": "aaaabad-ahmed",
     "title": "Aaaabad Ahmed — Portfolio",
