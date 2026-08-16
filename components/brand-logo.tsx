@@ -10,8 +10,7 @@ interface BrandLogoProps {
 /**
  * DEV GALLERY Brand Logo
  *
- * Exact 1:1 authentic rendering of the user's DEV logo paired with GALLERY wordmark,
- * optically balanced and shifted slightly down for optimal vertical alignment.
+ * Authentic rendering of the user's DEV logo paired with GALLERY wordmark.
  */
 export function BrandLogo({
   size = "md",
@@ -27,13 +26,14 @@ export function BrandLogo({
   const current = dimensions[size];
 
   return (
-    <div className={`brand-logo-root flex items-center gap-2 group select-none cursor-pointer translate-y-[2px] ${className}`}>
-      {/* Authentic DEV Logo Mark */}
+    <div className={`brand-logo-root flex items-center gap-2 group select-none cursor-pointer ${className}`}>
+      {/* Authentic DEV Logo Mark with unoptimized flag for instant local loading */}
       <Image
         src="/dev-logo.png"
         alt="DEV Logo"
         width={current.width}
         height={current.height}
+        unoptimized
         priority
         className="object-contain transition-transform duration-200 group-hover:scale-105"
         style={{ height: `${current.height}px`, width: "auto" }}
@@ -41,7 +41,7 @@ export function BrandLogo({
 
       {/* GALLERY Wordmark */}
       {showText && (
-        <span className={`font-black text-[#09090B] uppercase font-sans select-none leading-none pt-0.5 ${current.text}`}>
+        <span className={`font-black text-[#09090B] uppercase font-sans select-none leading-none translate-y-[6px] ${current.text}`}>
           GALLERY
         </span>
       )}
