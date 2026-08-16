@@ -1,9 +1,21 @@
+/**
+ * Primary professional discipline domain.
+ */
 export type Discipline = "DESIGN" | "ENGINEERING" | "PRODUCT" | "DATA" | "OTHER";
 
+/**
+ * Portfolio lifecycle and verification status.
+ */
 export type PortfolioStatus = "PENDING" | "LIVE" | "FLAGGED" | "ARCHIVED" | "BROKEN";
 
+/**
+ * Source of detected tech stack tags.
+ */
 export type DetectionSource = "SELF_DECLARED" | "AI_DETECTED" | "VERIFIED";
 
+/**
+ * Technology tag representation.
+ */
 export interface Technology {
   id: string;
   name: string;
@@ -11,6 +23,9 @@ export interface Technology {
   source: DetectionSource;
 }
 
+/**
+ * Developer / Designer profile owner.
+ */
 export interface Owner {
   username: string;
   displayName: string;
@@ -23,6 +38,9 @@ export interface Owner {
   contactEmail?: string;
 }
 
+/**
+ * Community engagement and ranking metrics.
+ */
 export interface EngagementMetrics {
   day: number;
   week: number;
@@ -30,6 +48,9 @@ export interface EngagementMetrics {
   allTime: number;
 }
 
+/**
+ * Peer recommendation or testimonial quote.
+ */
 export interface Testimonial {
   id: string;
   quote: string;
@@ -38,8 +59,14 @@ export interface Testimonial {
   authorAvatarUrl?: string;
 }
 
+/**
+ * Project repository source type.
+ */
 export type ProjectSource = "GITHUB_SYNC" | "MANUAL";
 
+/**
+ * Individual showcase project or GitHub repository.
+ */
 export interface Project {
   id: string;
   portfolioId: string;
@@ -61,12 +88,18 @@ export interface Project {
   overrides: string[];
 }
 
+/**
+ * Case study preview summary.
+ */
 export interface CaseStudySummary {
   id: string;
   title: string;
   format: "STATIC" | "VIDEO" | "INTERACTIVE_PROTOTYPE" | "PROCESS_DOC";
 }
 
+/**
+ * Core Portfolio data model representing a curated website entry.
+ */
 export interface Portfolio {
   id: string;
   slug: string;

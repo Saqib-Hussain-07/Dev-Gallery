@@ -1,224 +1,289 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { Portfolio } from "@/lib/types";
+import { useState, useEffect, useCallback } from "react";
 import { Bookmark, ExternalLink, Github, Share2, Check } from "lucide-react";
+import { Portfolio } from "@/lib/types";
 
-interface Props {
+/**
+ * Props for the PortfolioCard component.
+ */
+interface PortfolioCardProps {
   portfolio: Portfolio;
-  onSelectTech?: (techName: string) => void;
 }
 
-export function PortfolioCard({ portfolio, onSelectTech }: Props) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [imgSrc, setImgSrc] = useState(portfolio.coverImage);
+/**
+ * Fallback preview image in case external website screenshot fails to load.
+ */
+const FALLBACK_PREVIEW_IMAGE =
+  "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80";
 
+/**
+ * PortfolioCard Component
+ *
+ * Displays a showcase card for an individual developer/designer portfolio.
+ * Features:
+ * - Live screenshot preview with 16:10 aspect ratio and zoom on hover
+ * - Real-time pulse status badge (LIVE)
+ * - Bookmark toggle with localStorage persistence and header sync
+ * - Quick link share with clipboard copy feedback
+ * - Developer info & style category
+ * - Technology stack badges
+ * - External GitHub profile and Live Portfolio links
+ */
+export function PortfolioCard({ portfolio }: PortfolioCardProps) {
+  /* -------------------------------------------------------------------------- */
+  /* State & Hooks                                                              */
+  /* -------------------------------------------------------------------------- */
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [isLinkCopied, setIsLinkCopied] = useState<boolean>(false);
+  const [imageSource, setImageSource] = useState<string>(portfolio.coverImage);
+
+  // Sync image source if portfolio data updates
   useEffect(() => {
-    setImgSrc(portfolio.coverImage);
+    setImageSource(portfolio.coverImage);
   }, [portfolio.coverImage]);
 
+  // Load bookmark status from localStorage on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("wop_bookmarks");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.includes(portfolio.id)) {
+      const storedBookmarks = localStorage.getItem("wop_bookmarks");
+      if (storedBookmarks) {
+        const parsedIds: string[] = JSON.parse(storedBookmarks);
+        if (Array.isArray(parsedIds) && parsedIds.includes(portfolio.id)) {
           setIsBookmarked(true);
         }
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      console.warn("Failed to load bookmark state:", error);
     }
   }, [portfolio.id]);
 
-  const toggleBookmark = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const saved = localStorage.getItem("wop_bookmarks");
-      let list: string[] = saved ? JSON.parse(saved) : [];
-      if (isBookmarked) {
-        list = list.filter((id) => id !== portfolio.id);
-        setIsBookmarked(false);
-      } else {
-        list.push(portfolio.id);
-        setIsBookmarked(true);
-      }
-      localStorage.setItem("wop_bookmarks", JSON.stringify(list));
-      window.dispatchEvent(new Event("wop_bookmarks_updated"));
-    } catch {
-      // ignore
-    }
-  };
+  /* -------------------------------------------------------------------------- */
+  /* Event Handlers                                                             */
+  /* -------------------------------------------------------------------------- */
 
-  const handleShare = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: `${portfolio.owner.displayName} Portfolio`,
-          url: portfolio.url,
-        });
-      } else {
+  /**
+   * Toggles bookmark state and dispatches a global update event for the navbar counter.
+   */
+  const handleToggleBookmark = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        const stored = localStorage.getItem("wop_bookmarks");
+        let bookmarkList: string[] = stored ? JSON.parse(stored) : [];
+
+        if (isBookmarked) {
+          bookmarkList = bookmarkList.filter((id) => id !== portfolio.id);
+          setIsBookmarked(false);
+        } else {
+          bookmarkList.push(portfolio.id);
+          setIsBookmarked(true);
+        }
+
+        localStorage.setItem("wop_bookmarks", JSON.stringify(bookmarkList));
+        window.dispatchEvent(new Event("wop_bookmarks_updated"));
+      } catch (error) {
+        console.warn("Failed to update bookmark state:", error);
+      }
+    },
+    [isBookmarked, portfolio.id]
+  );
+
+  /**
+   * Handles sharing the portfolio URL via Web Share API or clipboard copy fallback.
+   */
+  const handleSharePortfolio = useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: `${portfolio.owner.displayName} — Portfolio`,
+            url: portfolio.url,
+          });
+        } else {
+          await navigator.clipboard.writeText(portfolio.url);
+          setIsLinkCopied(true);
+          setTimeout(() => setIsLinkCopied(false), 2000);
+        }
+      } catch {
+        // Clipboard fallback if native share is dismissed or unsupported
         await navigator.clipboard.writeText(portfolio.url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setIsLinkCopied(true);
+        setTimeout(() => setIsLinkCopied(false), 2000);
       }
-    } catch {
-      await navigator.clipboard.writeText(portfolio.url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+    },
+    [portfolio.owner.displayName, portfolio.url]
+  );
 
-  const githubUrl = portfolio.owner.githubUsername
+  // Derive developer GitHub URL
+  const developerGithubUrl = portfolio.owner.githubUsername
     ? `https://github.com/${portfolio.owner.githubUsername}`
     : `https://github.com/${portfolio.owner.username}`;
 
+  /* -------------------------------------------------------------------------- */
+  /* Render                                                                     */
+  /* -------------------------------------------------------------------------- */
   return (
-    <div className="relative group rounded-2xl bg-white border border-[#E4E4E7] hover:border-black/30 shadow-2xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between ring-1 ring-black/5 hover:ring-black/10">
-      {/* Top Floating Controls (Status, Bookmark & Share) */}
-      <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
-        {/* Status Badge with Live Pulse Dot */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#09090B]/85 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase shadow-xs border border-white/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{portfolio.status === "LIVE" ? "LIVE" : portfolio.status}</span>
+    <article
+      data-testid={`portfolio-card-${portfolio.id}`}
+      className="portfolio-card group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white border border-[#E5E7EB] hover:border-[#9CA3AF] shadow-2xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+    >
+      {/* --- Floating Overlay: Status Badge (Top-Left) --- */}
+      <div className="status-badge-container absolute top-3 left-3 z-20 flex items-center gap-1.5">
+        <div
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 text-white text-[10px] font-bold tracking-wider uppercase backdrop-blur-xs shadow-xs"
+          aria-label={`Portfolio Status: ${portfolio.status}`}
+        >
+          <span
+            className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"
+            aria-hidden="true"
+          />
+          <span>{portfolio.status}</span>
         </div>
       </div>
 
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
-        {/* Share Button with Copied Tooltip */}
+      {/* --- Floating Overlay: Quick Actions (Top-Right) --- */}
+      <div className="quick-actions-container absolute top-3 right-3 z-20 flex items-center gap-1.5">
+        {/* Share Button */}
         <div className="relative">
           <button
             type="button"
-            onClick={handleShare}
+            onClick={handleSharePortfolio}
             aria-label="Share portfolio link"
             title="Share portfolio"
-            className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md hover:bg-white shadow-xs border border-[#E4E4E7] flex items-center justify-center text-[#52525B] hover:text-black transition-all hover:scale-105 cursor-pointer"
+            className="action-button-share flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#4B5563] hover:text-black border border-[#E5E7EB] shadow-xs backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
           >
-            {copied ? (
+            {isLinkCopied ? (
               <Check size={14} className="text-emerald-600" />
             ) : (
               <Share2 size={13} />
             )}
           </button>
-          {copied && (
-            <div className="absolute -bottom-7 right-0 px-2 py-0.5 rounded-md bg-black text-white text-[10px] font-bold shadow-md whitespace-nowrap animate-in fade-in zoom-in-95">
+
+          {/* Copy Tooltip Confirmation */}
+          {isLinkCopied && (
+            <div
+              role="status"
+              className="copy-tooltip absolute -bottom-7 right-0 whitespace-nowrap rounded-md bg-black px-2 py-0.5 text-[10px] font-bold text-white shadow-md animate-in fade-in zoom-in-95"
+            >
               Link copied!
             </div>
           )}
         </div>
 
-        {/* Bookmark Toggle Button */}
+        {/* Bookmark Button */}
         <button
           type="button"
-          onClick={toggleBookmark}
+          onClick={handleToggleBookmark}
           aria-label={isBookmarked ? "Remove bookmark" : "Bookmark portfolio"}
           title={isBookmarked ? "Bookmarked" : "Bookmark"}
-          className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md hover:bg-white shadow-xs border border-[#E4E4E7] flex items-center justify-center text-[#52525B] hover:text-black transition-all hover:scale-105 cursor-pointer"
+          className="action-button-bookmark flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#4B5563] hover:text-black border border-[#E5E7EB] shadow-xs backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
         >
           <Bookmark
             size={14}
-            className={isBookmarked ? "fill-black text-black" : "text-[#52525B]"}
+            className={isBookmarked ? "fill-black text-black" : "text-[#4B5563]"}
           />
         </button>
       </div>
 
-      {/* Large Preview Thumbnail */}
-      <a
-        href={portfolio.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block relative aspect-16/10 w-full overflow-hidden bg-[#F4F4F5] group/preview"
-        title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
-      >
-        <Image
-          src={imgSrc}
-          alt={portfolio.title}
-          fill
-          unoptimized
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover group-hover/preview:scale-106 transition-transform duration-500 ease-out"
-          onError={() => {
-            setImgSrc(
-              "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"
-            );
-          }}
-        />
+      {/* --- Media: Large Preview Image with Live Link Launcher --- */}
+      <figure className="preview-figure relative aspect-16/10 w-full overflow-hidden bg-[#F3F4F6] m-0">
+        <a
+          href={portfolio.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
+          className="preview-link block h-full w-full group/preview"
+        >
+          <Image
+            src={imageSource}
+            alt={`${portfolio.owner.displayName} portfolio screenshot preview`}
+            fill
+            unoptimized
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="preview-image object-cover group-hover/preview:scale-105 transition-transform duration-500 ease-out"
+            onError={() => setImageSource(FALLBACK_PREVIEW_IMAGE)}
+          />
 
-        {/* Hover Overlay with Live Link CTA */}
-        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-          <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#09090B] text-xs font-bold shadow-xl backdrop-blur-xs hover:scale-105 transition-transform">
-            <span>Visit Live Portfolio</span>
-            <ExternalLink size={13} />
-          </span>
-        </div>
-      </a>
+          {/* Hover CTA Overlay */}
+          <div className="preview-hover-overlay absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 group-hover/preview:opacity-100 transition-opacity backdrop-blur-[1px]">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-black text-xs font-bold shadow-xl backdrop-blur-xs hover:scale-105 transition-transform">
+              <span>Visit Live Portfolio</span>
+              <ExternalLink size={13} />
+            </span>
+          </div>
+        </a>
+      </figure>
 
-      {/* Card Info Body */}
-      <div className="p-4 flex-1 flex flex-col justify-between gap-3">
-        {/* Developer Name & Style Category */}
-        <div>
+      {/* --- Content: Developer Information & Actions --- */}
+      <div className="card-content-body p-4 flex-1 flex flex-col justify-between gap-3">
+        {/* Developer Header & Style Category */}
+        <header className="developer-header">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-bold text-base text-[#09090B] group-hover:text-violet-950 leading-tight truncate">
+            <h3 className="developer-name text-base font-bold text-[#111827] group-hover:text-black leading-tight truncate">
               {portfolio.owner.displayName}
             </h3>
 
             {portfolio.styleCategory && (
-              <span className="text-[10px] font-semibold text-[#52525B] bg-[#F4F4F5] px-2.5 py-0.5 rounded-full shrink-0 border border-[#E4E4E7]/60">
+              <span className="style-category-badge shrink-0 rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[10px] font-semibold text-[#4B5563]">
                 {portfolio.styleCategory}
               </span>
             )}
           </div>
 
           {/* Technology Badges */}
-          <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
-            {portfolio.technologies.slice(0, 3).map((tech) => (
+          <div
+            className="tech-badges-list flex items-center gap-1.5 flex-wrap mt-2.5"
+            aria-label="Technologies used"
+          >
+            {portfolio.technologies.slice(0, 3).map((technology) => (
               <span
-                key={tech.id}
-                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F4F4F5] text-[#3F3F46] border border-[#E4E4E7]"
+                key={technology.id}
+                className="tech-badge rounded-md bg-[#F9FAFB] border border-[#E5E7EB] px-2 py-0.5 text-[10px] font-semibold text-[#374151]"
               >
-                {tech.name}
+                {technology.name}
               </span>
             ))}
             {portfolio.technologies.length > 3 && (
-              <span className="text-[10px] text-[#71717A] font-medium">
+              <span className="tech-overflow-count text-[10px] font-medium text-[#6B7280]">
                 +{portfolio.technologies.length - 3}
               </span>
             )}
           </div>
-        </div>
+        </header>
 
-        {/* Card Footer: Action Links (GitHub Link & Portfolio Live Link) */}
-        <div className="pt-3 border-t border-[#F4F4F5] flex items-center justify-between gap-2">
-          {/* GitHub Profile Link */}
+        {/* Action Footer: GitHub Link & Direct Live Link */}
+        <footer className="card-action-footer pt-3 border-t border-[#F0F1F3] flex items-center justify-between gap-2">
+          {/* Developer GitHub Profile Link */}
           <a
-            href={githubUrl}
+            href={developerGithubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            title={`View ${portfolio.owner.displayName}'s GitHub`}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#52525B] hover:text-black p-1.5 rounded-lg hover:bg-[#F4F4F5] transition-colors"
+            title={`View ${portfolio.owner.displayName}'s GitHub Profile`}
+            className="action-link-github inline-flex items-center gap-1.5 rounded-lg p-1.5 text-xs font-semibold text-[#4B5563] hover:text-black hover:bg-[#F3F4F6] transition-colors"
           >
             <Github size={15} />
-            <span className="text-[11px] font-semibold">GitHub</span>
+            <span className="text-[11px]">GitHub</span>
           </a>
 
-          {/* Direct Live Link Button */}
+          {/* Direct Live Site Launch Button */}
           <a
             href={portfolio.url}
             target="_blank"
             rel="noopener noreferrer"
-            title="Open live portfolio in new tab"
-            className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#09090B] hover:bg-[#18181B] px-3.5 py-1.5 rounded-full shadow-2xs transition-all hover:scale-102 active:scale-98 border border-white/10"
+            title={`Open ${portfolio.owner.displayName}'s portfolio in a new tab`}
+            className="action-btn-live inline-flex items-center gap-1.5 rounded-full bg-black hover:bg-[#27272A] px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs transition-all hover:scale-102 active:scale-98"
           >
             <span>Live site</span>
             <ExternalLink size={12} />
           </a>
-        </div>
+        </footer>
       </div>
-    </div>
+    </article>
   );
 }
