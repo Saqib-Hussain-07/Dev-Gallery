@@ -17,9 +17,10 @@ const PAGE_INCREMENT = 24;
 /**
  * HomePage Component
  *
- * Clean, full-width curated gallery synchronized with Saqib-Hussain-07/Wallfolio.
+ * Full-width, edge-to-edge responsive gallery synchronized with Saqib-Hussain-07/Wallfolio.
  * Features:
  * - 1,940+ Live developer portfolios parsed in real-time
+ * - Wide expansive layout with minimal horizontal gaps
  * - 100% No-login bookmarks filter (using localStorage)
  * - Smooth Infinite Scrolling with IntersectionObserver
  * - Shimmering skeleton placeholders matching Wall of Portfolios aesthetic
@@ -162,15 +163,15 @@ export default function HomePage() {
   /* -------------------------------------------------------------------------- */
   return (
     <div className="home-layout-wrapper flex flex-col w-full min-h-screen bg-[#E2E4E9]">
-      {/* Main Full-Width Content Container */}
-      <main className="main-content-card flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
-        <div className="content-inner-container w-full bg-white rounded-3xl border border-[#D0D3DC] p-4 sm:p-8 shadow-xs">
+      {/* Main Expansive Content Container */}
+      <main className="main-content-card flex-1 w-full max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="content-inner-container w-full bg-white rounded-2xl sm:rounded-3xl border border-[#D0D3DC] px-4 sm:px-8 lg:px-10 py-6 sm:py-8 shadow-xs">
           {/* ================================================================= */}
           {/* 1. HERO SECTION                                                  */}
           {/* ================================================================= */}
-          <section className="hero-section text-center pt-6 sm:pt-10 pb-6 flex flex-col items-center">
+          <section className="hero-section text-center pt-4 sm:pt-8 pb-4 flex flex-col items-center">
             {/* Live Repository Sync Ticker */}
-            <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-6 shadow-2xs">
+            <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-5 shadow-2xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -189,12 +190,12 @@ export default function HomePage() {
             </h1>
 
             {/* Sub-headline */}
-            <p className="hero-subheadline text-sm sm:text-lg text-[#52525B] mt-4 max-w-2xl font-normal leading-relaxed">
+            <p className="hero-subheadline text-sm sm:text-lg text-[#52525B] mt-3 max-w-2xl font-normal leading-relaxed">
               Discover cutting-edge interfaces, interactive design engineering, and verified tech stacks from top software creators worldwide.
             </p>
 
             {/* Verification Metrics Bar */}
-            <div className="hero-metrics-bar flex items-center gap-6 sm:gap-10 mt-6 pt-6 border-t border-[#E4E4E7]/60 text-center">
+            <div className="hero-metrics-bar flex items-center gap-6 sm:gap-10 mt-5 pt-5 border-t border-[#E4E4E7]/60 text-center">
               <div className="metric-item">
                 <p className="metric-value text-lg sm:text-xl font-extrabold text-[#09090B]">100%</p>
                 <p className="metric-label text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Live &amp; Verified</p>
@@ -225,7 +226,7 @@ export default function HomePage() {
           {/* ================================================================= */}
           {/* 4. CURATED PORTFOLIO WALL & INFINITE SCROLL GRID                 */}
           {/* ================================================================= */}
-          <section id="wall" className="portfolio-wall-section pt-8 pb-10">
+          <section id="wall" className="portfolio-wall-section pt-6 pb-8">
             {/* Section Header */}
             <header className="wall-section-header flex items-center justify-between mb-2">
               <div>
@@ -252,10 +253,10 @@ export default function HomePage() {
               {isLoadingInitial ? (
                 /* Initial Loading Skeleton Grid */
                 <div
-                  className={`portfolio-grid grid gap-6 sm:gap-7 ${
+                  className={`portfolio-grid grid gap-5 sm:gap-6 ${
                     viewMode === "spacious"
-                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                      : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                      : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
                   }`}
                 >
                   {Array.from({ length: 12 }).map((_, idx) => (
@@ -306,10 +307,10 @@ export default function HomePage() {
                 /* Dynamic Portfolio Grid with Infinite Scroll */
                 <>
                   <div
-                    className={`portfolio-grid grid gap-6 sm:gap-7 ${
+                    className={`portfolio-grid grid gap-5 sm:gap-6 ${
                       viewMode === "spacious"
-                        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
                     }`}
                   >
                     {paginatedPortfolios.map((portfolio) => (
