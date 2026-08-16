@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Search, X, ArrowUpRight } from "lucide-react";
+import { Search, X, ExternalLink } from "lucide-react";
 import { portfolios } from "@/lib/mock-data";
 
 interface Props {
@@ -12,23 +11,23 @@ interface Props {
 }
 
 const TRENDING_ROLES = [
-  "Visual designer",
+  "Visual Designer",
   "UI/UX Designer",
-  "Product designer",
+  "Product Designer",
   "Senior Frontend Engineer",
-  "Creative Director",
-  "Brand & Motion Designer",
+  "Design Technologist",
+  "Design Engineer",
 ];
 
 const TRENDING_SKILLS = [
   "Design Systems",
-  "SaaS",
   "Next.js",
   "Three.js",
   "WebGL",
-  "Micro-animations",
+  "Micro-interactions",
   "TypeScript",
   "Figma",
+  "Tailwind CSS",
 ];
 
 export function SearchModal({ isOpen, onClose }: Props) {
@@ -41,6 +40,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
         const q = query.toLowerCase();
         return (
           p.owner.displayName.toLowerCase().includes(q) ||
+          p.title.toLowerCase().includes(q) ||
           p.designation?.toLowerCase().includes(q) ||
           p.country?.toLowerCase().includes(q) ||
           p.primaryCategory.toLowerCase().includes(q) ||
@@ -67,14 +67,14 @@ export function SearchModal({ isOpen, onClose }: Props) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search Designers, Roles or Skills..."
+            placeholder="Search Portfolios, Roles or Skills..."
             className="flex-1 text-sm sm:text-base text-[#111827] placeholder-[#9CA3AF] bg-transparent focus:outline-none"
             autoFocus
           />
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="text-xs font-semibold text-[#6B7280] hover:text-black px-2 py-1 bg-[#F3F4F6] rounded-md"
+              className="text-xs font-semibold text-[#6B7280] hover:text-black px-2 py-1 bg-[#F3F4F6] rounded-md cursor-pointer"
             >
               Clear
             </button>
@@ -82,7 +82,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           <button
             onClick={onClose}
             aria-label="Close search"
-            className="w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] flex items-center justify-center text-[#4B5563] hover:text-black transition-colors shrink-0"
+            className="w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] flex items-center justify-center text-[#4B5563] hover:text-black transition-colors shrink-0 cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -93,32 +93,34 @@ export function SearchModal({ isOpen, onClose }: Props) {
           {query.trim() ? (
             <div>
               <p className="text-xs font-bold uppercase text-[#6B7280] mb-3">
-                Matching Profiles ({filteredPortfolios.length})
+                Matching Portfolios ({filteredPortfolios.length})
               </p>
               {filteredPortfolios.length === 0 ? (
                 <div className="py-12 text-center">
-                  <p className="text-sm font-semibold text-[#374151]">No designers found</p>
+                  <p className="text-sm font-semibold text-[#374151]">No portfolios found</p>
                   <p className="text-xs text-[#6B7280] mt-1">
-                    Try searching with another role or skill.
+                    Try searching with another role or skill keyword.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {filteredPortfolios.map((p) => (
-                    <Link
+                    <a
                       key={p.id}
-                      href={`/portfolio/${p.slug}`}
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={onClose}
                       className="flex items-center justify-between p-3 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-[#E5E7EB]">
+                        <div className="relative w-14 h-10 rounded-lg overflow-hidden shrink-0 border border-[#E5E7EB] bg-[#E5E7EB]">
                           <Image
-                            src={p.owner.avatarUrl}
-                            alt={p.owner.displayName}
+                            src={p.coverImage}
+                            alt={p.title}
                             fill
                             className="object-cover"
-                            sizes="40px"
+                            sizes="56px"
                           />
                         </div>
                         <div>
@@ -126,12 +128,15 @@ export function SearchModal({ isOpen, onClose }: Props) {
                             {p.owner.displayName}
                           </p>
                           <p className="text-xs text-[#6B7280]">
-                            {p.designation} · {p.country}
+                            {p.designation} {p.country ? `· ${p.country}` : ""}
                           </p>
                         </div>
                       </div>
-                      <ArrowUpRight size={18} className="text-[#9CA3AF] group-hover:text-black" />
-                    </Link>
+                      <div className="flex items-center gap-1 text-xs font-semibold text-[#4B5563] group-hover:text-black">
+                        <span>Live site</span>
+                        <ExternalLink size={14} />
+                      </div>
+                    </a>
                   ))}
                 </div>
               )}
@@ -149,7 +154,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                       key={role}
                       type="button"
                       onClick={() => setQuery(role)}
-                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors"
+                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
                     >
                       {role}
                     </button>
@@ -168,7 +173,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                       key={skill}
                       type="button"
                       onClick={() => setQuery(skill)}
-                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors"
+                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
                     >
                       {skill}
                     </button>

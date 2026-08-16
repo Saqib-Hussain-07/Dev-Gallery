@@ -1,25 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { Portfolio } from "@/lib/types";
-import { Heart } from "lucide-react";
-import { MostLikedModal } from "./most-liked-modal";
+import { Heart, ExternalLink } from "lucide-react";
 
 interface Props {
   portfolios: Portfolio[];
 }
 
 export function MostLikedStories({ portfolios }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-
   if (!portfolios || portfolios.length === 0) return null;
 
-  const handleOpen = (index: number) => {
-    setActiveIndex(index);
-    setIsOpen(true);
-  };
+  // Show top 6 most liked portfolios in the category card format
+  const topLiked = portfolios.slice(0, 6);
 
   return (
     <section className="py-8 border-b border-[#E5E7EB]">
@@ -35,71 +28,57 @@ export function MostLikedStories({ portfolios }: Props) {
         </span>
       </div>
 
-      <div className="flex items-center gap-6 overflow-x-auto pb-4 pt-1 hide-scrollbar scroll-rail">
-        {portfolios.map((portfolio, idx) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
+        {topLiked.map((portfolio, idx) => {
           const rank = idx + 1;
           return (
-            <button
+            <a
               key={portfolio.id}
-              onClick={() => handleOpen(idx)}
-              type="button"
-              className="flex flex-col items-center gap-2.5 shrink-0 group focus:outline-none cursor-pointer"
+              href={portfolio.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col rounded-xl overflow-hidden bg-white border border-[#E5E7EB] hover:border-[#9CA3AF] shadow-2xs hover:shadow-md transition-all duration-200 card-hover-effect relative"
+              title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
             >
-              {/* Glowing Story Ring with Portfolio Screenshot Preview */}
-              <div className="relative p-[3px] rounded-full story-ring-gradient group-hover:scale-105 transition-transform duration-200 shadow-sm">
-                <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white p-[2px]">
-                  <div className="relative w-full h-full rounded-full overflow-hidden bg-[#F3F4F6]">
-                    {/* Portfolio Website Screenshot */}
-                    <Image
-                      src={portfolio.coverImage}
-                      alt={portfolio.title}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </div>
-                </div>
+              {/* Rank Pill in Top-Left */}
+              <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-black/80 text-white text-[10px] font-extrabold backdrop-blur-xs shadow-xs">
+                #{rank}
+              </div>
 
-                {/* Creator Avatar Badge overlapping bottom-left */}
-                <div className="absolute -bottom-1 -left-1 w-7 h-7 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
-                  <Image
-                    src={portfolio.owner.avatarUrl}
-                    alt={portfolio.owner.displayName}
-                    fill
-                    className="object-cover"
-                    sizes="28px"
-                  />
-                </div>
-
-                {/* Rank Badge overlapping bottom-right */}
-                <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-black text-white border-2 border-white flex items-center justify-center text-[10px] font-extrabold shadow-sm">
-                  #{rank}
+              {/* Cover Preview Image */}
+              <div className="relative aspect-16/10 w-full overflow-hidden bg-[#F3F4F6]">
+                <Image
+                  src={portfolio.coverImage}
+                  alt={portfolio.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 640px) 50vw, 200px"
+                />
+                {/* External link indicator */}
+                <div className="absolute bottom-2 right-2 p-1 rounded-md bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ExternalLink size={12} />
                 </div>
               </div>
 
-              {/* Name & Like Count */}
-              <div className="flex flex-col items-center max-w-[100px]">
-                <span className="text-xs font-semibold text-[#111827] text-center truncate group-hover:text-black w-full">
+              {/* Card Body */}
+              <div className="p-3 flex flex-col justify-between flex-1">
+                <h3 className="font-semibold text-xs text-[#111827] leading-snug group-hover:text-black line-clamp-2">
                   {portfolio.owner.displayName}
-                </span>
-                <span className="text-[10px] font-medium text-rose-600 flex items-center gap-0.5 mt-0.5">
-                  <Heart size={10} className="fill-rose-500 text-rose-500" />
-                  {portfolio.likes.allTime.toLocaleString()}
-                </span>
+                </h3>
+                <div className="flex items-center justify-between text-[11px] font-medium text-rose-600 mt-1.5">
+                  <span className="flex items-center gap-1">
+                    <Heart size={11} className="fill-rose-500 text-rose-500" />
+                    {portfolio.likes.allTime.toLocaleString()} Likes
+                  </span>
+                  <span className="text-[10px] text-[#6B7280]">
+                    {portfolio.styleCategory}
+                  </span>
+                </div>
               </div>
-            </button>
+            </a>
           );
         })}
       </div>
-
-      {/* Interactive Story Modal */}
-      <MostLikedModal
-        portfolios={portfolios}
-        currentIndex={activeIndex}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSelectIndex={setActiveIndex}
-      />
     </section>
   );
 }

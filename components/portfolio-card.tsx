@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Portfolio } from "@/lib/types";
 import { Bookmark, Briefcase, ExternalLink } from "lucide-react";
@@ -74,6 +73,15 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
+
+          {/* Open to Work Badge (Overlaid on top-left of image) */}
+          {portfolio.openToWork && (
+            <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ECFDF5]/95 backdrop-blur-xs border border-[#A7F3D0] text-[#047857] text-[11px] font-semibold shadow-xs">
+              <Briefcase size={12} className="text-[#059669]" />
+              <span>Open to work</span>
+            </div>
+          )}
+
           {/* Live External Badge on Hover */}
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/link:opacity-100 transition-opacity flex items-center justify-center">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 text-black text-xs font-bold shadow-lg backdrop-blur-xs">
@@ -83,47 +91,25 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
           </div>
         </div>
 
-        {/* Creator DP & Tag Banner (overlapping thumbnail) */}
-        <div className="px-4 -mt-6 flex items-center justify-between relative z-10">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm bg-white shrink-0">
-            <Image
-              src={portfolio.owner.avatarUrl}
-              alt={portfolio.owner.displayName}
-              fill
-              className="object-cover"
-              sizes="48px"
-            />
-          </div>
-
-          {portfolio.openToWork && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-[11px] font-semibold shadow-2xs">
-              <Briefcase size={12} className="text-[#059669]" />
-              <span>Open to work</span>
-            </div>
-          )}
-        </div>
-
         {/* Info Body */}
-        <div className="p-4 pt-2.5 flex-1 flex flex-col justify-between">
+        <div className="p-4 flex-1 flex flex-col justify-between">
           <div>
             {/* Name and Location */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-bold text-base text-[#111827] group-hover:text-black leading-tight flex items-center gap-1.5">
-                <span>{portfolio.owner.displayName}</span>
-                <ExternalLink size={13} className="text-[#9CA3AF] group-hover/link:text-black opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-bold text-base text-[#111827] group-hover:text-black leading-tight flex items-center gap-1.5 truncate">
+                <span className="truncate">{portfolio.owner.displayName}</span>
+                <ExternalLink size={13} className="text-[#9CA3AF] group-hover/link:text-black opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
               </h3>
+
               {portfolio.country && (
-                <>
-                  <span className="text-[#9CA3AF] text-xs leading-none">•</span>
-                  <span className="text-xs font-normal text-[#6B7280]">
-                    {portfolio.country}
-                  </span>
-                </>
+                <span className="text-xs font-normal text-[#6B7280] shrink-0">
+                  {portfolio.country}
+                </span>
               )}
             </div>
 
             {/* Designation & Style Category */}
-            <div className="flex items-center gap-2 mt-1 text-xs text-[#6B7280]">
+            <div className="flex items-center gap-2 mt-1.5 text-xs text-[#6B7280]">
               <span className="truncate font-medium text-[#4B5563]">
                 {portfolio.designation || portfolio.tagline}
               </span>
@@ -150,7 +136,7 @@ export function PortfolioCard({ portfolio }: { portfolio: Portfolio }) {
             </span>
           </div>
 
-          {/* Discipline Badges & Profile Link */}
+          {/* Discipline Badges */}
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
             {portfolio.discipline.map((d) => (
               <span
