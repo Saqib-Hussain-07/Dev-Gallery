@@ -120,10 +120,10 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
     [portfolio.owner.displayName, portfolio.url]
   );
 
-  // Derive developer GitHub URL
+  // Derive developer GitHub URL (uses confirmed profile or search fallback to avoid 404s)
   const developerGithubUrl = portfolio.owner.githubUsername
     ? `https://github.com/${portfolio.owner.githubUsername}`
-    : `https://github.com/${portfolio.owner.username}`;
+    : `https://github.com/search?q=${encodeURIComponent(portfolio.owner.displayName)}&type=users`;
 
   /* -------------------------------------------------------------------------- */
   /* Render                                                                     */

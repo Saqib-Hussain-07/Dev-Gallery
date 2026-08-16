@@ -105,9 +105,9 @@ function extractMetaFromDescription(desc: string) {
 }
 
 /**
- * Intelligently derives the developer's GitHub username from their portfolio URL or name.
+ * Intelligently extracts confirmed GitHub usernames from verified GitHub URLs.
  */
-function extractGitHubUsername(url: string, displayName: string): string {
+function extractGitHubUsername(url: string): string | undefined {
   try {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
@@ -122,33 +122,15 @@ function extractGitHubUsername(url: string, displayName: string): string {
     // 2. Direct GitHub Profile or Repo: https://github.com/username/...
     if (hostname === "github.com" || hostname === "www.github.com") {
       const segments = pathname.split("/").filter(Boolean);
-      if (segments.length > 0 && segments[0] !== "features" && segments[0] !== "topics") {
+      if (segments.length > 0 && segments[0] !== "features" && segments[0] !== "topics" && segments[0] !== "explore") {
         return segments[0];
       }
     }
-
-    // 3. Developer subdomains: https://username.is-a.dev
-    if (hostname.endsWith(".is-a.dev")) {
-      const user = hostname.replace(".is-a.dev", "").trim();
-      if (user) return user;
-    }
-
-    // 4. Vercel / Netlify portfolio subdomains: https://username.vercel.app
-    if (hostname.endsWith(".vercel.app") || hostname.endsWith(".netlify.app")) {
-      const user = hostname
-        .replace(".vercel.app", "")
-        .replace(".netlify.app", "")
-        .replace(/-portfolio.*$/, "")
-        .replace(/-dev.*$/, "")
-        .trim();
-      if (user && user.length >= 3) return user;
-    }
   } catch {
-    // Fallback if URL object construction fails
+    // URL parsing fallback
   }
 
-  // 5. Clean name fallback
-  return slugify(displayName).replace(/-/g, "");
+  return undefined;
 }
 
 /**
@@ -191,7 +173,7 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
     const nameSlug = slugify(rawName) || `portfolio-${parsedPortfolios.length + 1}`;
     const uniqueId = `wallfolio-${parsedPortfolios.length + 1}`;
     const { technologies, primaryCategory, styleCategory } = extractMetaFromDescription(rawTagline);
-    const githubUsername = extractGitHubUsername(rawUrl, rawName);
+    const githubUsername = extractGitHubUsername(rawUrl);
 
     // Live screenshot preview URL generator
     const coverImage = `https://s0.wp.com/mshots/v1/${encodeURIComponent(rawUrl)}?w=1200&h=750`;
