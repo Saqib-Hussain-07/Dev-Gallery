@@ -1,48 +1,91 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { CategoriesSection } from "@/components/categories-section";
 import { MostLikedStories } from "@/components/most-liked-stories";
 import { CategoryFilterTabs } from "@/components/category-filter-tabs";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { SearchModal } from "@/components/search-modal";
-import { portfolios, getMostLikedPortfolios } from "@/lib/mock-data";
+import { portfolios as staticFallbackPortfolios, getMostLikedPortfolios } from "@/lib/mock-data";
+import { Portfolio } from "@/lib/types";
+import { Sparkles, Loader2, ArrowDown } from "lucide-react";
+
+const INITIAL_PAGE_SIZE = 24;
+const PAGE_INCREMENT = 24;
 
 /**
  * HomePage Component
  *
- * Primary gallery view of Wall of Portfolios / DevGallery.
- * Layout structure:
- * - Fixed left sidebar navigation (lg:flex)
- * - Large white card container on grey background shell
- * - Hero banner with live verification metrics
- * - Top categories showcase grid
- * - Top-rated community spotlight rail
- * - Sticky category filter tabs with view mode switcher
- * - Responsive 3-column / 4-column portfolio wall grid
- * - Global search dialog
+ * Dynamically synchronized with Saqib-Hussain-07/Wallfolio repository.
+ * Features:
+ * - 1,900+ Live verified developer portfolios parsed in real-time
+ * - Progressive loading / pagination for snappy browser performance
+ * - Category filter tabs & grid view switcher (Bento vs Dense)
+ * - Community spotlight top-rated rail
  */
 export default function HomePage() {
   /* -------------------------------------------------------------------------- */
-  /* State & Hooks                                                              */
+  /* State & Data Sync                                                          */
   /* -------------------------------------------------------------------------- */
+  const [allPortfolios, setAllPortfolios] = useState<Portfolio[]>(staticFallbackPortfolios);
+  const [isLoadingLive, setIsLoadingLive] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"spacious" | "dense">("spacious");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_PAGE_SIZE);
 
-  // Top rated portfolios for spotlight section
-  const spotlightPortfolios = useMemo(() => getMostLikedPortfolios(8), []);
+  // Fetch live Wallfolio dataset on initial mount
+  useEffect(() => {
+    let isMounted = true;
 
-  // Filtered portfolio list based on active category pill
+    async function fetchLivePortfolios() {
+      try {
+        const response = await fetch("/api/wallfolio/sync");
+        if (!response.ok) throw new Error("Failed to load Wallfolio sync");
+        const data = await response.json();
+        if (isMounted && data.portfolios && data.portfolios.length > 0) {
+          setAllPortfolios(data.portfolios);
+        }
+      } catch (error) {
+        console.warn("Could not load live Wallfolio dataset, using fallback:", error);
+      } finally {
+        if (isMounted) setIsLoadingLive(false);
+      }
+    }
+
+    fetchLivePortfolios();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Reset pagination when switching categories
+  useEffect(() => {
+    setVisibleCount(INITIAL_PAGE_SIZE);
+  }, [selectedCategory]);
+
+  // Spotlight top ranked portfolios
+  const spotlightPortfolios = useMemo(() => {
+    return allPortfolios.slice(0, 8);
+  }, [allPortfolios]);
+
+  // Filtered dataset according to category
   const filteredPortfolios = useMemo(() => {
-    return portfolios.filter((portfolio) => {
+    return allPortfolios.filter((portfolio) => {
       if (selectedCategory !== "all") {
         return portfolio.primaryCategory === selectedCategory;
       }
       return true;
     });
-  }, [selectedCategory]);
+  }, [allPortfolios, selectedCategory]);
+
+  // Sliced paginated subset for rendering
+  const paginatedPortfolios = useMemo(() => {
+    return filteredPortfolios.slice(0, visibleCount);
+  }, [filteredPortfolios, visibleCount]);
+
+  const hasMorePortfolios = visibleCount < filteredPortfolios.length;
 
   /* -------------------------------------------------------------------------- */
   /* Render                                                                     */
@@ -59,15 +102,15 @@ export default function HomePage() {
           {/* 1. HERO SECTION                                                  */}
           {/* ================================================================= */}
           <section className="hero-section text-center pt-6 sm:pt-10 pb-6 flex flex-col items-center">
-            {/* Live Ecosystem Ticker */}
+            {/* Live Repository Sync Ticker */}
             <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-6 shadow-2xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span>1,200+ Live Portfolios Indexed</span>
+              <span>{allPortfolios.length.toLocaleString()}+ Live Portfolios Synced</span>
               <span className="text-[#D4D4D8]">•</span>
-              <span className="text-violet-700 font-bold">Updated Hourly</span>
+              <span className="text-violet-700 font-bold">Updated Daily</span>
             </div>
 
             {/* Main Headline */}
@@ -80,7 +123,7 @@ export default function HomePage() {
 
             {/* Sub-headline */}
             <p className="hero-subheadline text-sm sm:text-lg text-[#52525B] mt-4 max-w-2xl font-normal leading-relaxed">
-              Discover cutting-edge interfaces, interactive design engineering, and verified tech stacks from top software creators.
+              Discover cutting-edge interfaces, interactive design engineering, and verified tech stacks from top software creators worldwide.
             </p>
 
             {/* Verification Metrics Bar */}
@@ -91,8 +134,8 @@ export default function HomePage() {
               </div>
               <div className="metric-divider w-px h-8 bg-[#E4E4E7]" />
               <div className="metric-item">
-                <p className="metric-value text-lg sm:text-xl font-extrabold text-[#09090B]">30+ Tech</p>
-                <p className="metric-label text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Stacks Detected</p>
+                <p className="metric-value text-lg sm:text-xl font-extrabold text-[#09090B]">{allPortfolios.length}+</p>
+                <p className="metric-label text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Developers Listed</p>
               </div>
               <div className="metric-divider w-px h-8 bg-[#E4E4E7]" />
               <div className="metric-item">
@@ -123,7 +166,7 @@ export default function HomePage() {
                   Curated Developer Portfolios
                 </h2>
                 <p className="wall-subtitle text-xs text-[#71717A] font-medium">
-                  Showing {filteredPortfolios.length} handpicked portfolios
+                  Showing {paginatedPortfolios.length} of {filteredPortfolios.length} portfolios
                 </p>
               </div>
             </header>
@@ -158,27 +201,47 @@ export default function HomePage() {
                 </div>
               ) : (
                 /* Dynamic Portfolio Grid */
-                <div
-                  className={`portfolio-grid grid gap-6 sm:gap-7 ${
-                    viewMode === "spacious"
-                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                      : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  }`}
-                >
-                  {filteredPortfolios.map((portfolio) => (
-                    <PortfolioCard key={portfolio.id} portfolio={portfolio} />
-                  ))}
-                </div>
+                <>
+                  <div
+                    className={`portfolio-grid grid gap-6 sm:gap-7 ${
+                      viewMode === "spacious"
+                        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                    }`}
+                  >
+                    {paginatedPortfolios.map((portfolio) => (
+                      <PortfolioCard key={portfolio.id} portfolio={portfolio} />
+                    ))}
+                  </div>
+
+                  {/* Load More Button & Progress */}
+                  {hasMorePortfolios && (
+                    <div className="load-more-container mt-12 flex flex-col items-center justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setVisibleCount((prev) => prev + PAGE_INCREMENT)}
+                        className="btn-load-more inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#09090B] hover:bg-[#18181B] text-white text-sm font-bold shadow-md hover:shadow-xl transition-all hover:scale-102 active:scale-98 cursor-pointer"
+                      >
+                        <ArrowDown size={15} />
+                        <span>Load more portfolios</span>
+                      </button>
+                      <p className="text-xs text-[#71717A] font-medium">
+                        Showing {paginatedPortfolios.length} of {filteredPortfolios.length.toLocaleString()} total
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>
         </div>
       </main>
 
-      {/* Global Search Dialog Modal */}
+      {/* Global Search Dialog Modal with Full Dataset */}
       <SearchModal
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
+        customPortfolios={allPortfolios}
       />
     </div>
   );

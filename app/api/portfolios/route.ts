@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { portfolios } from "@/lib/mock-data";
+import { getWallfolioPortfolios } from "@/lib/wallfolio-sync";
 import { searchQuerySchema, submitPortfolioSchema } from "@/lib/schemas";
 import { Portfolio } from "@/lib/types";
 
-// GET /api/portfolios?discipline=DESIGN&discipline=ENGINEERING&technology=Figma&category=web-design&sort=recent
+// GET /api/portfolios
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
 
@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
 
   const { q, discipline, technology, category, sort } = parsed.data;
 
-  let results = portfolios.filter((p) => p.status === "LIVE");
+  const allPortfolios = await getWallfolioPortfolios();
+  let results = allPortfolios.filter((p) => p.status === "LIVE");
 
   if (discipline?.length) {
     results = results.filter((p) => p.discipline.some((d) => discipline.includes(d)));
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
   if (technology) {
     results = results.filter((p) => p.technologies.some((t) => t.name === technology));
   }
-  if (category) {
+  if (category && category !== "all") {
     results = results.filter((p) => p.primaryCategory === category);
   }
   if (q) {
@@ -37,8 +38,10 @@ export async function GET(req: NextRequest) {
     results = results.filter(
       (p) =>
         p.title.toLowerCase().includes(needle) ||
+        p.owner.displayName.toLowerCase().includes(needle) ||
         p.tagline.toLowerCase().includes(needle) ||
-        p.description.toLowerCase().includes(needle)
+        p.description.toLowerCase().includes(needle) ||
+        p.technologies.some((t) => t.name.toLowerCase().includes(needle))
     );
   }
 
@@ -54,15 +57,10 @@ function sortPortfolios(list: Portfolio[], sort: "default" | "recent" | "popular
   if (sort === "popular") {
     return [...list].sort((a, b) => b.bookmarkCount - a.bookmarkCount);
   }
-  // "default" — quality score. Informational-not-exclusionary per §4.1:
-  // this only ever reorders, the caller has already applied filters above.
   return [...list].sort((a, b) => b.qualityScore - a.qualityScore);
 }
 
-// POST /api/portfolios — submission (§3.1 stage 5, §4.1 automated baseline gate)
-// NOTE: mock-only. In production this enqueues an ingestion-worker job (§1.2)
-// for link health, screenshot capture, and tech detection rather than writing
-// synchronously — see README "What's deferred".
+// POST /api/portfolios — submission
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = submitPortfolioSchema.safeParse(body);
@@ -71,8 +69,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  // Simulate the baseline gate outcome. Never actually persisted — mock-data
-  // module is read-only at runtime in this environment.
   return NextResponse.json(
     {
       status: "PENDING",

@@ -5,12 +5,15 @@ import Image from "next/image";
 import { Search, X, ExternalLink } from "lucide-react";
 import { portfolios } from "@/lib/mock-data";
 
+import { Portfolio } from "@/lib/types";
+
 /**
  * Props for the SearchModal component.
  */
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
+  customPortfolios?: Portfolio[];
 }
 
 const POPULAR_SEARCH_CATEGORIES = [
@@ -40,15 +43,17 @@ const POPULAR_TECH_KEYWORDS = [
  * - Technology stacks
  * Displays trending discovery tags when the input query is empty.
  */
-export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+export function SearchModal({ isOpen, onClose, customPortfolios }: SearchModalProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const searchSource = customPortfolios && customPortfolios.length > 0 ? customPortfolios : portfolios;
 
   // Memoized search filtering across title, owner, category, and tech stack
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return [];
 
-    return portfolios.filter((item) => {
+    return searchSource.filter((item) => {
       return (
         item.owner.displayName.toLowerCase().includes(query) ||
         item.title.toLowerCase().includes(query) ||
@@ -57,8 +62,8 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         (item.styleCategory && item.styleCategory.toLowerCase().includes(query)) ||
         item.technologies.some((tech) => tech.name.toLowerCase().includes(query))
       );
-    });
-  }, [searchQuery]);
+    }).slice(0, 50); // Limit to top 50 matches for instant UI response
+  }, [searchQuery, searchSource]);
 
   if (!isOpen) return null;
 

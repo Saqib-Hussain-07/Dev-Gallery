@@ -56,12 +56,30 @@ export function Navbar() {
   /**
    * Picks a random portfolio from the curated dataset and launches it in a new tab.
    */
-  const handleLaunchRandomPortfolio = useCallback(() => {
-    if (portfolios.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * portfolios.length);
-    const selectedPortfolio = portfolios[randomIndex];
-    if (selectedPortfolio?.url) {
-      window.open(selectedPortfolio.url, "_blank", "noopener,noreferrer");
+  const handleLaunchRandomPortfolio = useCallback(async () => {
+    try {
+      const response = await fetch("/api/wallfolio/sync");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.portfolios && data.portfolios.length > 0) {
+          const randomIndex = Math.floor(Math.random() * data.portfolios.length);
+          const selected = data.portfolios[randomIndex];
+          if (selected?.url) {
+            window.open(selected.url, "_blank", "noopener,noreferrer");
+            return;
+          }
+        }
+      }
+    } catch {
+      // fallback
+    }
+
+    if (portfolios.length > 0) {
+      const randomIndex = Math.floor(Math.random() * portfolios.length);
+      const selectedPortfolio = portfolios[randomIndex];
+      if (selectedPortfolio?.url) {
+        window.open(selectedPortfolio.url, "_blank", "noopener,noreferrer");
+      }
     }
   }, []);
 
