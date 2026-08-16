@@ -1,19 +1,65 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { QueryProvider } from "@/components/query-provider";
 import { CommandPalette } from "@/components/command-palette";
 
+export const viewport: Viewport = {
+  themeColor: "#E2E4E9",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://wallofportfolios.in"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://wallofportfolios.in"),
   title: {
-    default: "Wall of Portfolios — Discover Top Developer & Designer Portfolios",
+    default: "Wall of Portfolios — Curated Directory of 1,900+ Developer & Designer Portfolios",
     template: "%s | Wall of Portfolios",
   },
   description:
-    "Wall of Portfolios is a curated index of the world's best designer and developer portfolios.",
-  robots: { index: true, follow: true },
+    "Wall of Portfolios is a curated directory of 1,900+ world-class developer & designer portfolios. Explore live websites, verified tech stacks, and creative inspiration.",
+  keywords: [
+    "developer portfolio",
+    "designer portfolio",
+    "software engineer",
+    "frontend developer",
+    "full stack developer",
+    "design engineering",
+    "web development",
+    "portfolio inspiration",
+    "Three.js portfolio",
+    "minimalist portfolio",
+  ],
+  authors: [{ name: "Wall of Portfolios Community" }],
+  creator: "Saqib Hussain",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://wallofportfolios.in",
+    siteName: "Wall of Portfolios",
+    title: "Wall of Portfolios — Curated Directory of 1,900+ Developer Portfolios",
+    description:
+      "Explore 1,900+ handpicked, live developer and designer portfolios with real-time previews and tech stacks.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wall of Portfolios — Curated Directory of 1,900+ Developer Portfolios",
+    description:
+      "Explore 1,900+ handpicked, live developer and designer portfolios with real-time previews and tech stacks.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

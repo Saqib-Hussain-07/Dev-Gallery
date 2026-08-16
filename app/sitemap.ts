@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
 import { portfolios } from "@/lib/mock-data";
 
-const BASE_URL = "https://ledger.example.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://wallofportfolios.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE_URL, changeFrequency: "daily", priority: 1 },
-    { url: `${BASE_URL}/submit`, changeFrequency: "monthly", priority: 0.5 },
+    { url: BASE_URL, changeFrequency: "daily", priority: 1.0 },
   ];
 
   const portfolioRoutes: MetadataRoute.Sitemap = portfolios
