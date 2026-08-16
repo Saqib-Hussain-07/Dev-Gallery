@@ -1,54 +1,68 @@
 import React from "react";
-import Image from "next/image";
 
 interface BrandLogoProps {
   size?: "sm" | "md" | "lg";
-  showText?: boolean;
   className?: string;
 }
 
 /**
- * DevGallery Brand Logo
+ * DEV Brand Logo
  *
- * Direct rendering of the user's uploaded "DEV" brand identity asset
- * using next/image with seamless blend and responsive scaling.
+ * Vector implementation of the bold interlocking "DEV" monogram:
+ * - Bold block D
+ * - E connecting smoothly from the base of D
+ * - Angled V overlapping the middle E-bar with crisp negative space cut-gap
  */
 export function BrandLogo({
   size = "md",
-  showText = false,
   className = "",
 }: BrandLogoProps) {
-  const dimensions = {
-    sm: { height: 24, width: 62 },
-    md: { height: 32, width: 82 },
-    lg: { height: 42, width: 108 },
+  const heights = {
+    sm: 22,
+    md: 27,
+    lg: 34,
   };
 
-  const current = dimensions[size];
-
   return (
-    <div className={`brand-logo-root flex items-center gap-2 select-none group cursor-pointer ${className}`}>
-      {/* Uploaded DEV Logo Asset */}
-      <div
-        style={{ height: `${current.height}px`, width: `${current.width}px` }}
-        className="relative flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105"
+    <div className={`brand-logo-root flex items-center group select-none ${className}`}>
+      {/* Pure Interlocking DEV Monogram */}
+      <svg
+        height={heights[size]}
+        viewBox="0 0 176 72"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-black transition-transform duration-200 group-hover:scale-105"
+        aria-label="DEV Logo"
       >
-        <Image
-          src="/dev-logo.png"
-          alt="DevGallery Logo"
-          fill
-          unoptimized
-          priority
-          className="object-contain mix-blend-multiply"
+        {/* D outer & inner counter */}
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M0 0H46C65 0 74 10 74 27C74 44 64 56 46 56H20V72H0V0ZM20 16V40H44C52 40 55 35 55 27C55 19 51 16 44 16H20Z"
+          fill="currentColor"
         />
-      </div>
 
-      {/* Optional Subtext */}
-      {showText && (
-        <span className="font-mono font-bold tracking-[0.2em] text-[10px] sm:text-[11px] text-[#09090B] uppercase">
-          GALLERY
-        </span>
-      )}
+        {/* E Top Horizontal Bar */}
+        <rect x="52" y="0" width="58" height="16" fill="currentColor" />
+
+        {/* E Middle Horizontal Bar */}
+        <rect x="52" y="27" width="46" height="15" fill="currentColor" />
+
+        {/* E Bottom Horizontal Bar */}
+        <rect x="46" y="56" width="62" height="16" fill="currentColor" />
+
+        {/* Diagonal Negative Space Cut Gap behind the V's left arm */}
+        <polygon
+          points="88,20 102,20 118,72 104,72"
+          fill="#E2E4E9"
+        />
+
+        {/* V Monogram Overlap */}
+        <polygon
+          points="106,0 128,54 150,0 174,0 138,72 118,72 84,0"
+          fill="currentColor"
+        />
+      </svg>
     </div>
   );
 }
