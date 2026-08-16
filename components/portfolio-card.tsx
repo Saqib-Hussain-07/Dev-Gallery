@@ -38,10 +38,12 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [isLinkCopied, setIsLinkCopied] = useState<boolean>(false);
   const [imageSource, setImageSource] = useState<string>(portfolio.coverImage);
+  const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
 
   // Sync image source if portfolio data updates
   useEffect(() => {
     setImageSource(portfolio.coverImage);
+    setIsImageLoaded(false);
   }, [portfolio.coverImage]);
 
   // Load bookmark status from localStorage on mount
@@ -208,8 +210,17 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
         </button>
       </div>
 
-      {/* --- Media: Large Preview Image with Live Link Launcher --- */}
+      {/* --- Media: Large Preview Image with Progressive Loading Shimmer --- */}
       <figure className="preview-figure relative aspect-16/10 w-full overflow-hidden bg-[#F3F4F6] m-0">
+        {/* Placeholder Shimmer while image is generating */}
+        {!isImageLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-linear-to-r from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] animate-pulse">
+            <span className="text-xs font-bold text-[#9CA3AF] tracking-wider uppercase">
+              {portfolio.owner.displayName.slice(0, 2)}
+            </span>
+          </div>
+        )}
+
         <a
           href={portfolio.url}
           target="_blank"
@@ -222,9 +233,16 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
             alt={`${portfolio.owner.displayName} portfolio screenshot preview`}
             fill
             unoptimized
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="preview-image object-cover group-hover/preview:scale-105 transition-transform duration-500 ease-out"
-            onError={() => setImageSource(FALLBACK_PREVIEW_IMAGE)}
+            loading="lazy"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
+            className={`preview-image object-cover group-hover/preview:scale-105 transition-all duration-500 ease-out ${
+              isImageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            onLoad={() => setIsImageLoaded(true)}
+            onError={() => {
+              setImageSource(FALLBACK_PREVIEW_IMAGE);
+              setIsImageLoaded(true);
+            }}
           />
 
           {/* Hover CTA Overlay */}

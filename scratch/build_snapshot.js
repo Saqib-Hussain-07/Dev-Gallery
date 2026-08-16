@@ -1,18 +1,25 @@
-import { Portfolio, Owner, Technology, Discipline } from "@/lib/types";
-import { portfolios as fallbackStaticPortfolios } from "@/lib/mock-data";
-import localWallfolioSnapshot from "@/data/wallfolio-portfolios.json";
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
 
-/**
- * Raw GitHub URL of the Wallfolio README containing 1,900+ developer portfolios.
- */
-const WALLFOLIO_README_URL =
-  "https://raw.githubusercontent.com/Saqib-Hussain-07/Wallfolio/master/README.md";
+const WALLFOLIO_README_URL = "https://raw.githubusercontent.com/Saqib-Hussain-07/Wallfolio/master/README.md";
 
-let cachedPortfolios: Portfolio[] | null = localWallfolioSnapshot as unknown as Portfolio[];
-let lastFetchTimestamp: number = Date.now();
-const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'User-Agent': 'DevGallery/1.0' } }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return fetchText(res.headers.location).then(resolve, reject);
+      }
+      if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
+      let data = "";
+      res.on("data", (c) => (data += c));
+      res.on("end", () => resolve(data));
+      res.on("error", reject);
+    }).on("error", reject);
+  });
+}
 
-function slugify(text: string): string {
+function slugify(text) {
   return text
     .toLowerCase()
     .trim()
@@ -21,29 +28,26 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/**
- * Parses role/description strings to extract style categories and technologies.
- */
-function extractMetaFromDescription(desc: string, index: number) {
+function extractMetaFromDescription(desc, index) {
   const lower = desc.toLowerCase();
-  const technologies: Technology[] = [];
+  const technologies = [];
 
   const techKeywords = [
-    { name: "React", category: "FRAMEWORK" as const },
-    { name: "Next.js", category: "FRAMEWORK" as const },
-    { name: "Vue", category: "FRAMEWORK" as const },
-    { name: "Svelte", category: "FRAMEWORK" as const },
-    { name: "TypeScript", category: "LANGUAGE" as const },
-    { name: "JavaScript", category: "LANGUAGE" as const },
-    { name: "Python", category: "LANGUAGE" as const },
-    { name: "Flutter", category: "FRAMEWORK" as const },
-    { name: "Tailwind CSS", category: "LIBRARY" as const },
-    { name: "Three.js", category: "LIBRARY" as const },
-    { name: "WebGL", category: "LIBRARY" as const },
-    { name: "Node.js", category: "PLATFORM" as const },
-    { name: "NestJS", category: "FRAMEWORK" as const },
-    { name: "AI", category: "LIBRARY" as const },
-    { name: "GLSL", category: "LANGUAGE" as const },
+    { name: "React", category: "FRAMEWORK" },
+    { name: "Next.js", category: "FRAMEWORK" },
+    { name: "Vue", category: "FRAMEWORK" },
+    { name: "Svelte", category: "FRAMEWORK" },
+    { name: "TypeScript", category: "LANGUAGE" },
+    { name: "JavaScript", category: "LANGUAGE" },
+    { name: "Python", category: "LANGUAGE" },
+    { name: "Flutter", category: "FRAMEWORK" },
+    { name: "Tailwind CSS", category: "LIBRARY" },
+    { name: "Three.js", category: "LIBRARY" },
+    { name: "WebGL", category: "LIBRARY" },
+    { name: "Node.js", category: "PLATFORM" },
+    { name: "NestJS", category: "FRAMEWORK" },
+    { name: "AI", category: "LIBRARY" },
+    { name: "GLSL", category: "LANGUAGE" },
   ];
 
   for (const tech of techKeywords) {
@@ -68,7 +72,6 @@ function extractMetaFromDescription(desc: string, index: number) {
     });
   }
 
-  // Explicit keyword matchers for category tabs
   let primaryCategory = "";
   let styleCategory = "";
 
@@ -97,7 +100,6 @@ function extractMetaFromDescription(desc: string, index: number) {
     primaryCategory = "engineering";
     styleCategory = "Engineering";
   } else {
-    // Balanced natural distribution across all categories for uncategorized entries
     const fallbackCategories = [
       { slug: "minimalist", label: "Minimalist" },
       { slug: "modern", label: "Modern Layouts" },
@@ -116,10 +118,7 @@ function extractMetaFromDescription(desc: string, index: number) {
   return { technologies, primaryCategory, styleCategory };
 }
 
-/**
- * Intelligently extracts confirmed GitHub usernames from verified GitHub URLs.
- */
-function extractGitHubUsername(url: string): string | undefined {
+function extractGitHubUsername(url) {
   try {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
@@ -136,21 +135,16 @@ function extractGitHubUsername(url: string): string | undefined {
         return segments[0];
       }
     }
-  } catch {
-    // URL parsing fallback
-  }
-
+  } catch {}
   return undefined;
 }
 
-/**
- * Parses markdown lines from Wallfolio README into Portfolio objects.
- */
-export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
-  const lines = markdown.split("\n");
-  const parsedPortfolios: Portfolio[] = [];
-  const seenUrls = new Set<string>();
-
+async function buildLocalSnapshot() {
+  console.log("Fetching live Wallfolio README...");
+  const markdownText = await fetchText(WALLFOLIO_README_URL);
+  const lines = markdownText.split("\n");
+  const parsedPortfolios = [];
+  const seenUrls = new Set();
   const entryRegex = /^\s*-\s*\[(.*?)\]\((.*?)\)(?:\s*\[(.*?)\])?/;
 
   for (const line of lines) {
@@ -162,7 +156,6 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
     const rawTagline = match[3]?.trim() || "";
 
     if (!rawName || !rawUrl) continue;
-
     if (rawUrl.startsWith("#") || rawUrl.startsWith(".") || rawUrl.includes("twitter.com") || rawUrl.includes("github.com/Saqib-Hussain-07")) {
       continue;
     }
@@ -178,11 +171,12 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
     const nameSlug = slugify(rawName) || `portfolio-${parsedPortfolios.length + 1}`;
     const uniqueId = `wallfolio-${parsedPortfolios.length + 1}`;
     const { technologies, primaryCategory, styleCategory } = extractMetaFromDescription(rawTagline, parsedPortfolios.length);
-    // Optimized screenshot resolution (w=640&h=400) for 3x faster capture & instant loading
-    const coverImage = `https://s0.wp.com/mshots/v1/${encodeURIComponent(rawUrl)}?w=640&h=400`;
     const githubUsername = extractGitHubUsername(rawUrl);
 
-    const owner: Owner = {
+    // Optimized w=640&h=400 preview
+    const coverImage = `https://s0.wp.com/mshots/v1/${encodeURIComponent(rawUrl)}?w=640&h=400`;
+
+    const owner = {
       username: nameSlug,
       displayName: rawName,
       githubUsername,
@@ -192,7 +186,7 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
       skills: technologies.map((t) => t.name),
     };
 
-    const portfolio: Portfolio = {
+    const portfolio = {
       id: uniqueId,
       slug: nameSlug,
       title: `${rawName} — Portfolio`,
@@ -201,21 +195,21 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
       tagline: rawTagline || `${styleCategory} Developer Portfolio`,
       description: rawTagline ? `${rawName} — ${rawTagline}` : `Live developer portfolio of ${rawName}.`,
       status: "LIVE",
-      discipline: ["ENGINEERING" as Discipline],
+      discipline: ["ENGINEERING"],
       coverImage,
       qualityScore: 90 + (parsedPortfolios.length % 10),
       aiSummary: `Curated portfolio from Wallfolio: ${rawName}. Verified live website and stack.`,
-      viewCount: 300 + (parsedPortfolios.length * 17) % 2500,
-      bookmarkCount: 15 + (parsedPortfolios.length * 7) % 180,
+      viewCount: 300 + ((parsedPortfolios.length * 17) % 2500),
+      bookmarkCount: 15 + ((parsedPortfolios.length * 7) % 180),
       likes: {
         day: 2 + (parsedPortfolios.length % 8),
         week: 12 + (parsedPortfolios.length % 35),
         month: 45 + (parsedPortfolios.length % 120),
-        allTime: 120 + (parsedPortfolios.length * 23) % 950,
+        allTime: 120 + ((parsedPortfolios.length * 23) % 950),
       },
       primaryCategory,
       verifiedAt: new Date().toISOString(),
-      createdAt: new Date(Date.now() - (parsedPortfolios.length * 3600000)).toISOString(),
+      createdAt: new Date(Date.now() - parsedPortfolios.length * 3600000).toISOString(),
       technologies,
       caseStudies: [],
       testimonials: [],
@@ -225,52 +219,12 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
     parsedPortfolios.push(portfolio);
   }
 
-  return parsedPortfolios;
+  const outDir = path.join(__dirname, "..", "data");
+  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+
+  const outPath = path.join(outDir, "wallfolio-portfolios.json");
+  fs.writeFileSync(outPath, JSON.stringify(parsedPortfolios, null, 2));
+  console.log(`Saved ${parsedPortfolios.length} parsed portfolios to data/wallfolio-portfolios.json`);
 }
 
-import https from "https";
-
-function fetchTextFromUrl(url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, { headers: { "User-Agent": "DevGallery/1.0" } }, (res) => {
-        if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          return fetchTextFromUrl(res.headers.location).then(resolve, reject);
-        }
-        if (res.statusCode !== 200) {
-          return reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
-        }
-        let data = "";
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-        res.on("end", () => resolve(data));
-        res.on("error", reject);
-      })
-      .on("error", reject);
-  });
-}
-
-export async function getWallfolioPortfolios(forceRefresh: boolean = false): Promise<Portfolio[]> {
-  const now = Date.now();
-
-  if (!forceRefresh && cachedPortfolios && now - lastFetchTimestamp < CACHE_TTL_MS) {
-    return cachedPortfolios;
-  }
-
-  try {
-    const markdownText = await fetchTextFromUrl(WALLFOLIO_README_URL);
-    const parsedList = parseWallfolioMarkdown(markdownText);
-
-    if (parsedList.length > 0) {
-      cachedPortfolios = parsedList;
-      lastFetchTimestamp = now;
-      return parsedList;
-    }
-
-    return fallbackStaticPortfolios;
-  } catch (error) {
-    console.error("[Wallfolio Sync] Live fetch error:", error);
-    return cachedPortfolios || fallbackStaticPortfolios;
-  }
-}
+buildLocalSnapshot().catch(console.error);

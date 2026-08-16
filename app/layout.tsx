@@ -66,6 +66,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to WordPress screenshot CDN and avatar services for fast screenshot loading */}
+        <link rel="preconnect" href="https://s0.wp.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://s0.wp.com" />
+        <link rel="preconnect" href="https://avatar.vercel.sh" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://avatar.vercel.sh" />
+      </head>
       <body className="min-h-screen flex flex-col bg-[#E2E4E9] text-[#111827] font-sans antialiased selection:bg-black selection:text-white">
         <a href="#main-content" className="skip-link">
           Skip to content
