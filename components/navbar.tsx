@@ -5,15 +5,18 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, Bookmark, Sparkles, Shuffle } from "lucide-react";
 import { portfolios } from "@/lib/mock-data";
 
+import { BrandLogo } from "@/components/brand-logo";
+
 /**
  * Navbar Component
  *
- * Sticky application header providing:
- * - Brand logo & home link
- * - Command palette search modal trigger (⌘K)
- * - "Shuffle" random portfolio launcher
- * - Reactive bookmark count badge
- * - Submit portfolio CTA button
+ * Top application header on the grey shell.
+ * Features:
+ * - Brand logo link to home
+ * - Desktop command palette search trigger (⌘K)
+ * - Random shuffle button (opens a surprise live portfolio from full dataset)
+ * - Mobile search trigger button
+ * - Saved bookmarks counter with reactive storage sync
  */
 export function Navbar() {
   /* -------------------------------------------------------------------------- */
@@ -22,7 +25,7 @@ export function Navbar() {
   const [savedBookmarkCount, setSavedBookmarkCount] = useState<number>(0);
 
   /**
-   * Reads the current bookmark list from localStorage and updates the badge counter.
+   * Synchronizes saved bookmarks count from localStorage.
    */
   const handleSyncBookmarkCount = useCallback(() => {
     try {
@@ -93,22 +96,10 @@ export function Navbar() {
         <div className="navbar-brand-section flex items-center shrink-0">
           <Link
             href="/"
-            className="navbar-brand-link flex items-center gap-2.5 group focus:outline-none"
+            className="navbar-brand-link focus:outline-none"
             aria-label="DevGallery Home"
           >
-            {/* Brand Mark Icon */}
-            <div className="brand-logo-icon flex items-center justify-center h-8 w-8 rounded-xl bg-black text-white shadow-xs group-hover:scale-105 transition-transform">
-              <span className="font-mono font-black text-sm tracking-tighter text-white">
-                DG
-              </span>
-            </div>
-
-            {/* Typography */}
-            <div className="brand-logo-typography flex items-center leading-none">
-              <span className="font-extrabold text-base tracking-tight text-black">
-                Dev<span className="text-[#6B7280] font-bold">Gallery</span>
-              </span>
-            </div>
+            <BrandLogo size="md" />
           </Link>
         </div>
 

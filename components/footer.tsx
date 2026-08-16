@@ -1,12 +1,13 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function Footer() {
   return (
     <footer className="border-t border-[#D0D3DC] bg-[#E2E4E9] py-5 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B7280]">
         {/* Left: Brand & Copyright */}
-        <div className="flex items-center gap-2">
-          <span className="font-extrabold text-black">DevGallery</span>
+        <div className="flex items-center gap-3">
+          <BrandLogo size="sm" />
           <span>© {new Date().getFullYear()} — Curated Index of 1,900+ Developer &amp; Designer Portfolios.</span>
         </div>
 
