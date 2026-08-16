@@ -7,7 +7,7 @@ import { submitPortfolioSchema, SubmitPortfolioInput } from "@/lib/schemas";
 import { submitPortfolio } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Loader2, Link as LinkIcon, AlertCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Link as LinkIcon, AlertCircle, Sparkles } from "lucide-react";
 import { disciplineFacets } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -23,12 +23,7 @@ export default function SubmitPage() {
     defaultValues: { url: "", title: "", discipline: [] },
   });
 
-  // Hits POST /api/portfolios (app/api/portfolios/route.ts), which validates
-  // against the *same* submitPortfolioSchema server-side — the one-schema
-  // contract §1.4 calls for. In production this enqueues ingestion-worker
-  // (§1.2) instead of resolving immediately.
   const mutation = useMutation({ mutationFn: submitPortfolio });
-
   const urlValue = watch("url");
 
   function onSubmit(values: SubmitPortfolioInput) {
@@ -37,105 +32,117 @@ export default function SubmitPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-16">
-      <span className="font-mono text-xs uppercase tracking-[0.2em] text-signal">Submit</span>
-      <h1 className="font-display text-4xl mt-3 mb-3">List your work on the wall</h1>
-      <p className="text-ink-soft mb-10 leading-relaxed">
-        No manual gate. Automated checks confirm your link resolves and isn&apos;t parked —
-        that&apos;s it. You&apos;re discoverable immediately, and quality surfaces through ranking, never exclusion.
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-xs font-bold text-indigo-300 mb-4">
+        <Sparkles size={12} />
+        <span>Instant Indexing</span>
+      </div>
+
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F8FAFC] tracking-tight mb-3">
+        Submit your portfolio to DevGallery
+      </h1>
+      <p className="text-sm text-[#94A3B8] mb-10 leading-relaxed">
+        Zero gate. Automated verification checks that your live site resolves and captures screenshot previews immediately.
       </p>
 
       {mutation.isSuccess ? (
-        <div className="border border-moss/40 rounded-[var(--radius-card)] p-6 bg-card">
-          <div className="flex items-center gap-2 text-moss mb-4 font-mono text-xs uppercase tracking-wider">
-            <CheckCircle2 size={16} /> {mutation.data.status === "PENDING" ? "Submitted — queued for baseline checks" : "Listed"}
+        <div className="border border-emerald-500/30 rounded-3xl p-6 sm:p-8 bg-[#0F1117] shadow-2xl">
+          <div className="flex items-center gap-2 text-emerald-400 mb-4 font-mono text-xs uppercase tracking-wider font-bold">
+            <CheckCircle2 size={16} /> Listed Successfully
           </div>
-          <p className="text-sm text-ink-soft mb-4">{mutation.data.message}</p>
-          <ul className="space-y-2 text-sm text-ink-soft mb-6">
+          <p className="text-sm text-[#F8FAFC] mb-4 font-semibold">{mutation.data.message}</p>
+          <ul className="space-y-2 text-xs text-[#94A3B8] mb-6">
             <li>✓ Link resolves and responds ({mutation.data.submission.url})</li>
-            <li>✓ Not a parked domain</li>
-            <li>✓ Screenshot capture queued</li>
-            <li>✓ Tech stack detection queued — you can confirm or correct tags on your profile</li>
+            <li>✓ Automated screenshot capture initialized</li>
+            <li>✓ Tech stack detection queued</li>
           </ul>
           <div className="flex flex-wrap gap-2 mb-6">
             {mutation.data.submission.discipline.map((d) => (
-              <Badge key={d} tone="outline">{d.toLowerCase()}</Badge>
+              <span
+                key={d}
+                className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-[rgba(99,102,241,0.08)] text-[#A5B4FC] border border-[rgba(99,102,241,0.2)] uppercase"
+              >
+                {d.toLowerCase()}
+              </span>
             ))}
           </div>
-          <p className="text-xs text-ink-faint font-mono">
-            AI critique (§2.1) generates within 5 minutes and will appear on your portfolio page.
-          </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 bg-[#0F1117] border border-white/[0.08] p-6 sm:p-8 rounded-3xl shadow-2xl"
+          noValidate
+        >
           <div>
-            <label className="block font-mono text-[11px] uppercase tracking-wider text-ink-faint mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#64748B] mb-2">
               Portfolio URL
             </label>
             <div
               className={cn(
-                "flex items-center gap-2 border px-3",
-                errors.url ? "border-signal" : "border-rule focus-within:border-ink"
+                "flex items-center gap-2 border rounded-xl px-3 bg-[#171922]",
+                errors.url ? "border-rose-500" : "border-white/[0.08] focus-within:border-indigo-400"
               )}
             >
-              <LinkIcon size={15} className="text-ink-faint shrink-0" />
+              <LinkIcon size={15} className="text-[#64748B] shrink-0" />
               <input
                 {...register("url")}
                 type="text"
                 placeholder="https://yourwork.com"
-                className="w-full bg-transparent py-3 text-sm focus:outline-none"
+                className="w-full bg-transparent py-3 text-sm text-[#F8FAFC] placeholder-[#64748B] focus:outline-none"
               />
             </div>
             {errors.url && (
-              <p className="flex items-center gap-1 text-xs text-signal mt-1.5 font-mono">
+              <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5">
                 <AlertCircle size={12} /> {errors.url.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block font-mono text-[11px] uppercase tracking-wider text-ink-faint mb-2">
-              Title
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#64748B] mb-2">
+              Developer Name or Portfolio Title
             </label>
             <input
               {...register("title")}
-              placeholder="e.g. Jordan Blake — Product Design"
+              type="text"
+              placeholder="e.g. Alex Morgan — Design Engineer"
               className={cn(
-                "w-full bg-transparent border px-3 py-3 text-sm focus:outline-none",
-                errors.title ? "border-signal" : "border-rule focus:border-ink"
+                "w-full border rounded-xl px-3 py-3 text-sm text-[#F8FAFC] placeholder-[#64748B] bg-[#171922] focus:outline-none",
+                errors.title ? "border-rose-500" : "border-white/[0.08] focus:border-indigo-400"
               )}
             />
             {errors.title && (
-              <p className="flex items-center gap-1 text-xs text-signal mt-1.5 font-mono">
+              <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5">
                 <AlertCircle size={12} /> {errors.title.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block font-mono text-[11px] uppercase tracking-wider text-ink-faint mb-2">
-              Discipline (select at least one)
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#64748B] mb-2">
+              Discipline Focus
             </label>
             <Controller
-              name="discipline"
               control={control}
+              name="discipline"
               render={({ field }) => (
                 <div className="flex flex-wrap gap-2">
                   {disciplineFacets.map((d) => {
-                    const active = field.value.includes(d);
+                    const active = field.value?.includes(d);
                     return (
                       <button
-                        type="button"
                         key={d}
-                        onClick={() =>
+                        type="button"
+                        onClick={() => {
+                          const curr = field.value || [];
                           field.onChange(
-                            active ? field.value.filter((x) => x !== d) : [...field.value, d]
-                          )
-                        }
+                            active ? curr.filter((x) => x !== d) : [...curr, d]
+                          );
+                        }}
                         className={cn(
-                          "px-3 py-1.5 text-xs font-mono uppercase tracking-wider border transition-colors",
+                          "text-xs font-semibold px-3 py-1.5 rounded-full border transition-all cursor-pointer",
                           active
-                            ? "bg-signal text-signal-ink border-signal"
-                            : "bg-transparent text-ink-soft border-rule hover:border-ink-faint"
+                            ? "bg-indigo-600 text-white border-indigo-400 shadow-sm"
+                            : "bg-[#171922] text-[#94A3B8] border-white/[0.08] hover:border-white/[0.18]"
                         )}
                       >
                         {d.toLowerCase()}
@@ -146,27 +153,26 @@ export default function SubmitPage() {
               )}
             />
             {errors.discipline && (
-              <p className="flex items-center gap-1 text-xs text-signal mt-1.5 font-mono">
+              <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5">
                 <AlertCircle size={12} /> {errors.discipline.message}
               </p>
             )}
           </div>
 
-          {mutation.isError && (
-            <p className="flex items-center gap-1 text-xs text-signal font-mono">
-              <AlertCircle size={12} /> {(mutation.error as Error).message}
-            </p>
-          )}
-
-          <Button type="submit" size="lg" disabled={mutation.isPending || !urlValue} className="w-full sm:w-auto">
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="w-full btn-primary-gradient text-white text-sm font-bold py-3 px-6 rounded-full shadow-lg transition-transform active:scale-98 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+          >
             {mutation.isPending ? (
               <>
-                <Loader2 size={16} className="animate-spin" /> Running baseline checks
+                <Loader2 size={16} className="animate-spin" />
+                <span>Verifying link...</span>
               </>
             ) : (
-              "Submit for listing"
+              <span>Submit Portfolio</span>
             )}
-          </Button>
+          </button>
         </form>
       )}
     </div>

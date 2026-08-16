@@ -16,29 +16,29 @@ export function MostLikedStories({ portfolios }: Props) {
 
   const getRankBadge = (rank: number) => {
     if (rank === 1) return { label: "1st", color: "bg-amber-400 text-black border-amber-300 ring-2 ring-amber-400/30", icon: "🥇" };
-    if (rank === 2) return { label: "2nd", color: "bg-zinc-200 text-black border-zinc-300 ring-2 ring-zinc-300/30", icon: "🥈" };
+    if (rank === 2) return { label: "2nd", color: "bg-slate-200 text-black border-slate-300 ring-2 ring-slate-300/30", icon: "🥈" };
     if (rank === 3) return { label: "3rd", color: "bg-amber-700 text-white border-amber-600 ring-2 ring-amber-700/30", icon: "🥉" };
-    return { label: `#${rank}`, color: "bg-black/80 text-white border-white/20", icon: null };
+    return { label: `#${rank}`, color: "bg-[#08090C]/80 text-white border-white/20", icon: null };
   };
 
   return (
-    <section className="py-8 border-b border-[#E4E4E7]">
+    <section className="py-8 border-b border-white/[0.07]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-linear-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-sm">
             <Flame size={18} />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-[#09090B] tracking-tight flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC] tracking-tight flex items-center gap-2">
               <span>Community Spotlight</span>
             </h2>
-            <p className="text-xs text-[#71717A] font-medium hidden sm:block">
+            <p className="text-xs text-[#64748B] font-medium hidden sm:block">
               Top ranked portfolios voted by designers &amp; engineers worldwide
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold shadow-2xs">
-          <Trophy size={13} className="text-rose-600" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/25 text-xs font-bold shadow-2xs">
+          <Trophy size={13} className="text-rose-400" />
           <span>Top Rated</span>
         </div>
       </div>
@@ -55,10 +55,10 @@ export function MostLikedStories({ portfolios }: Props) {
               href={portfolio.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group flex flex-col rounded-2xl overflow-hidden bg-white border transition-all duration-300 card-hover-effect relative ${
+              className={`group flex flex-col rounded-2xl overflow-hidden bg-[#0F1117] border transition-all duration-300 card-hover-effect relative ${
                 isTop3
-                  ? "border-[#D4D4D8] hover:border-black shadow-xs hover:shadow-lg ring-1 ring-black/5"
-                  : "border-[#E4E4E7] hover:border-[#A1A1AA] shadow-2xs hover:shadow-md"
+                  ? "border-white/[0.12] hover:border-white/[0.22] shadow-md hover:shadow-2xl"
+                  : "border-white/[0.07] hover:border-white/[0.18] shadow-xs"
               }`}
               title={`Visit ${portfolio.owner.displayName}'s live portfolio`}
             >
@@ -71,7 +71,7 @@ export function MostLikedStories({ portfolios }: Props) {
               </div>
 
               {/* Cover Preview Image */}
-              <div className="relative aspect-16/10 w-full overflow-hidden bg-[#F4F4F5]">
+              <div className="relative aspect-16/10 w-full overflow-hidden bg-[#171922]">
                 <Image
                   src={portfolio.coverImage}
                   alt={portfolio.title}
@@ -81,8 +81,8 @@ export function MostLikedStories({ portfolios }: Props) {
                   sizes="(max-width: 640px) 50vw, 200px"
                 />
                 {/* External link indicator */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="p-2 rounded-full bg-white/95 text-black shadow-md">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                  <span className="p-2 rounded-full bg-[#1E202B] text-white border border-white/20 shadow-md">
                     <ExternalLink size={13} />
                   </span>
                 </div>
@@ -90,15 +90,15 @@ export function MostLikedStories({ portfolios }: Props) {
 
               {/* Card Body */}
               <div className="p-3.5 flex flex-col justify-between flex-1">
-                <h3 className="font-bold text-xs text-[#09090B] leading-snug group-hover:text-violet-950 line-clamp-1">
+                <h3 className="font-bold text-xs text-[#F8FAFC] leading-snug group-hover:text-indigo-300 transition-colors line-clamp-1">
                   {portfolio.owner.displayName}
                 </h3>
-                <div className="flex items-center justify-between text-[11px] font-semibold text-rose-600 mt-2">
+                <div className="flex items-center justify-between text-[11px] font-semibold text-rose-400 mt-2">
                   <span className="flex items-center gap-1">
                     <Heart size={11} className="fill-rose-500 text-rose-500" />
                     {portfolio.likes.allTime.toLocaleString()}
                   </span>
-                  <span className="text-[10px] font-medium text-[#71717A] bg-[#F4F4F5] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium text-[#94A3B8] bg-[#171922] px-1.5 py-0.5 rounded border border-white/[0.05]">
                     {portfolio.styleCategory}
                   </span>
                 </div>

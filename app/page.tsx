@@ -39,51 +39,54 @@ export default function HomePage() {
   }, [selectedCategory, selectedTech]);
 
   return (
-    <div className="flex w-full min-h-screen bg-[#FAFAFB]">
+    <div className="flex w-full min-h-screen bg-[#08090C] text-[#94A3B8]">
       {/* Left Sidebar Navigation */}
       <SidebarNav />
 
       {/* Main Content Area */}
       <div className="flex-1 w-full min-w-0 px-4 sm:px-8 py-6 sm:py-8 max-w-7xl mx-auto">
-        {/* HERO SECTION */}
-        <section className="text-center pt-6 sm:pt-10 pb-6 flex flex-col items-center">
+        {/* HERO SECTION with Ambient Radial Mesh Glow */}
+        <section className="relative text-center pt-8 sm:pt-14 pb-8 flex flex-col items-center ambient-hero-glow rounded-3xl mb-4 border border-white/[0.04]">
+          {/* Ambient Glow Orb */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-indigo-600/15 blur-[90px] pointer-events-none rounded-full" />
+
           {/* Live Ecosystem Ticker */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-6 shadow-2xs">
+          <div className="relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0F1117]/90 border border-white/[0.1] text-xs font-semibold text-[#94A3B8] mb-6 shadow-xl backdrop-blur-md">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>1,200+ Live Portfolios Indexed</span>
-            <span className="text-[#D4D4D8]">•</span>
-            <span className="text-violet-700 font-bold">Updated Hourly</span>
+            <span className="text-[#F8FAFC]">1,200+ Live Portfolios Indexed</span>
+            <span className="text-[#64748B]">•</span>
+            <span className="text-indigo-400 font-bold">Updated Hourly</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#09090B] tracking-tight leading-[1.06] max-w-4xl">
+          <h1 className="relative text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#F8FAFC] tracking-tight leading-[1.08] max-w-4xl">
             The curated gallery of <br className="hidden sm:inline" />
-            <span className="bg-linear-to-r from-[#09090B] via-violet-950 to-zinc-700 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
               world-class developer portfolios
             </span>
           </h1>
 
-          <p className="text-sm sm:text-lg text-[#52525B] mt-4 max-w-2xl font-normal leading-relaxed">
+          <p className="relative text-sm sm:text-lg text-[#94A3B8] mt-4 max-w-2xl font-normal leading-relaxed">
             Discover cutting-edge interfaces, interactive design engineering, and verified tech stacks from top software creators.
           </p>
 
           {/* Quick Metrics Bar */}
-          <div className="flex items-center gap-6 sm:gap-10 mt-6 pt-6 border-t border-[#E4E4E7]/60 text-center">
+          <div className="relative flex items-center gap-6 sm:gap-12 mt-8 pt-6 border-t border-white/[0.06] text-center">
             <div>
-              <p className="text-lg sm:text-xl font-extrabold text-[#09090B]">100%</p>
-              <p className="text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Live &amp; Verified</p>
+              <p className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC]">100%</p>
+              <p className="text-[11px] text-[#64748B] font-medium uppercase tracking-wider mt-0.5">Live &amp; Verified</p>
             </div>
-            <div className="w-px h-8 bg-[#E4E4E7]" />
+            <div className="w-px h-8 bg-white/[0.08]" />
             <div>
-              <p className="text-lg sm:text-xl font-extrabold text-[#09090B]">30+ Tech</p>
-              <p className="text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Stacks Detected</p>
+              <p className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC]">30+ Tech</p>
+              <p className="text-[11px] text-[#64748B] font-medium uppercase tracking-wider mt-0.5">Stacks Detected</p>
             </div>
-            <div className="w-px h-8 bg-[#E4E4E7]" />
+            <div className="w-px h-8 bg-white/[0.08]" />
             <div>
-              <p className="text-lg sm:text-xl font-extrabold text-[#09090B]">Zero Gate</p>
-              <p className="text-[11px] text-[#71717A] font-medium uppercase tracking-wider">Instant Showcase</p>
+              <p className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC]">Zero Gate</p>
+              <p className="text-[11px] text-[#64748B] font-medium uppercase tracking-wider mt-0.5">Instant Showcase</p>
             </div>
           </div>
         </section>
@@ -98,10 +101,10 @@ export default function HomePage() {
         <section id="wall" className="pt-8 pb-20">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#09090B] tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC] tracking-tight">
                 Curated Developer Portfolios
               </h2>
-              <p className="text-xs text-[#71717A] font-medium">
+              <p className="text-xs text-[#64748B] font-medium mt-0.5">
                 Showing {filteredPortfolios.length} handpicked portfolios
               </p>
             </div>
@@ -121,11 +124,11 @@ export default function HomePage() {
           {/* Portfolio Grid */}
           <div className="pt-6">
             {filteredPortfolios.length === 0 ? (
-              <div className="py-20 text-center bg-white rounded-3xl border border-[#E4E4E7] p-8 shadow-xs">
-                <p className="text-base font-bold text-[#09090B]">
+              <div className="py-20 text-center bg-[#0F1117] rounded-3xl border border-white/[0.07] p-8 shadow-2xl">
+                <p className="text-base font-bold text-[#F8FAFC]">
                   No portfolios match this combination
                 </p>
-                <p className="text-xs text-[#71717A] mt-1 mb-4">
+                <p className="text-xs text-[#64748B] mt-1 mb-5">
                   Try clearing the tech stack or selecting all categories.
                 </p>
                 <div className="flex items-center justify-center gap-2">
@@ -135,7 +138,7 @@ export default function HomePage() {
                       setSelectedCategory("all");
                       setSelectedTech("All Tech");
                     }}
-                    className="px-5 py-2 rounded-full bg-[#09090B] text-white text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#18181B] transition-colors"
+                    className="px-5 py-2.5 rounded-full btn-primary-gradient text-white text-xs font-semibold cursor-pointer shadow-md transition-transform active:scale-98"
                   >
                     Reset all filters
                   </button>

@@ -1,35 +1,31 @@
 @import "tailwindcss";
 
 /*
-  DESIGN SYSTEM — "Wall of Portfolios / DevGallery"
-  Ultra-clean, modern, light-neutral showcase design system with high-contrast typography,
-  pure-white cards, subtle hairline borders, vibrant story rings, and smooth micro-interactions.
+  DESIGN SYSTEM — DevGallery Dark Elevation & Atmospheric Theme
+  A refined 4-tier elevation architecture with subtle alpha luminance borders,
+  atmospheric radial gradients, and modern indigo/violet accents.
 */
 
 @theme {
-  /* Canvas & Backgrounds */
-  --color-paper: #fafafb;
-  --color-paper-dim: #f3f4f6;
-  --color-paper-card: #ffffff;
-  --color-card-hover: #f9fafb;
+  /* 4-Tier Dark Elevation System */
+  --color-canvas: #08090c;
+  --color-card-surface: #0f1117;
+  --color-card-raised: #171922;
+  --color-floating: #1e202b;
 
-  /* Typography Colors */
-  --color-ink: #111827;
-  --color-ink-soft: #4b5563;
-  --color-ink-faint: #6b7280;
-  --color-ink-muted: #9ca3af;
+  /* Typography Hierarchy */
+  --color-heading: #f8fafc;
+  --color-body: #94a3b8;
+  --color-muted: #64748b;
 
-  /* Borders & Rules */
-  --color-rule: #e5e7eb;
-  --color-rule-subtle: #f0f1f3;
+  /* Subtle Luminance Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.07);
+  --color-border-hover: rgba(255, 255, 255, 0.18);
 
-  /* Brand / Action Accents */
-  --color-brand: #000000;
-  --color-brand-ink: #ffffff;
-
-  /* Status Colors */
-  --color-emerald-tag: #10b981;
-  --color-emerald-bg: #ecfdf5;
+  /* Primary Accent & Gradient CTA */
+  --color-accent-indigo: #6366f1;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-emerald: #10b981;
 
   /* Fonts */
   --font-sans: var(--font-sans-src), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -37,31 +33,52 @@
   --font-mono: var(--font-mono-src), "SFMono-Regular", Menlo, monospace;
 
   /* Radii */
-  --radius-card: 0.875rem;
+  --radius-card: 1rem;
   --radius-pill: 9999px;
 }
 
 html {
-  background-color: var(--color-paper);
-  color: var(--color-ink);
-  color-scheme: light;
+  background-color: #08090c;
+  color: #f8fafc;
+  color-scheme: dark;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+  background-color: #08090c;
+  color: #94a3b8;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: #111827;
+  background: #6366f1;
   color: #ffffff;
 }
 
-/* Custom Scrollbar for Rails */
+/* Ambient Radial Mesh Gradients */
+.ambient-hero-glow {
+  background-image: radial-gradient(ellipse 65% 45% at 50% -10%, rgba(99, 102, 241, 0.14), rgba(139, 92, 246, 0.05) 50%, transparent 80%);
+}
+
+.ambient-card-glow {
+  background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08), transparent 70%);
+}
+
+/* Card Hover Elevation & Smooth Border Luminance */
+.card-hover-effect {
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 260ms ease, border-color 260ms ease, background-color 260ms ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  background-color: #171922;
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 25px -5px rgba(99, 102, 241, 0.12);
+}
+
+/* Custom Scrollbar */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -70,82 +87,20 @@ body {
   scrollbar-width: none;
 }
 
-.scroll-rail {
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.scroll-rail::-webkit-scrollbar {
-  display: none;
-}
-.scroll-rail > * {
-  scroll-snap-align: start;
+/* Primary CTA Gradient */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Card Hover Elevation */
-.card-hover-effect {
-  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease, border-color 240ms ease;
-}
-.card-hover-effect:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
-  border-color: #d1d5db;
-}
-
-/* Story Ring Gradient */
-.story-ring-gradient {
-  background: linear-gradient(135deg, #f59e0b 0%, #ec4899 50%, #6366f1 100%);
-}
-
-.story-ring-gradient-hover:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #db2777 50%, #4f46e5 100%);
-  transform: scale(1.04);
-}
-
-/* Marquee Animations */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 35s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* Skeleton Shimmer */
-.skeleton-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.skeleton-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  animation: shimmer 1.6s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.btn-primary-gradient:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
 }
 
 /* Accessibility Focus Ring */
 :focus-visible {
-  outline: 2px solid #111827;
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -155,7 +110,7 @@ body {
   left: -9999px;
   top: 0;
   z-index: 100;
-  background: #111827;
+  background: #6366f1;
   color: #ffffff;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -179,8 +134,5 @@ body {
   .card-hover-effect:hover {
     transform: none;
     box-shadow: none;
-  }
-  .animate-marquee {
-    animation: none;
   }
 }

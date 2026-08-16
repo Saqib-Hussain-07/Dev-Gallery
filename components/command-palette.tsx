@@ -42,36 +42,36 @@ export function CommandPalette() {
 
   return (
     <div
-      className="cmdk-overlay fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4"
+      className="cmdk-overlay fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4 bg-black/75 backdrop-blur-md"
       onClick={close}
       role="presentation"
     >
       <Command
-        label="Search Wall of Portfolios"
-        className="w-full max-w-xl bg-white border border-[#E5E7EB] rounded-2xl shadow-2xl overflow-hidden"
+        label="Search DevGallery"
+        className="w-full max-w-xl bg-[#1E202B] border border-white/[0.1] rounded-3xl shadow-2xl overflow-hidden text-[#94A3B8]"
         onClick={(e) => e.stopPropagation()}
         shouldFilter
       >
-        <div className="flex items-center gap-3 border-b border-[#E5E7EB] px-4">
-          <Search size={16} className="text-[#9CA3AF] shrink-0" aria-hidden="true" />
+        <div className="flex items-center gap-3 border-b border-white/[0.08] px-4 bg-[#171922]/50">
+          <Search size={16} className="text-indigo-400 shrink-0" aria-hidden="true" />
           <Command.Input
             autoFocus
             placeholder="Search portfolios, categories, skills…"
-            className="w-full bg-transparent py-4 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
+            className="w-full bg-transparent py-4 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
           />
-          <kbd className="text-[10px] font-mono text-[#6B7280] border border-[#E5E7EB] px-1.5 py-0.5 rounded-sm shrink-0">
+          <kbd className="text-[10px] font-mono text-[#94A3B8] border border-white/[0.1] bg-[#171922] px-2 py-0.5 rounded-md shrink-0">
             ESC
           </kbd>
         </div>
 
         <Command.List className="max-h-[60vh] overflow-y-auto p-2">
-          <Command.Empty className="py-8 text-center text-sm text-[#6B7280]">
+          <Command.Empty className="py-8 text-center text-sm text-[#64748B]">
             No results found.
           </Command.Empty>
 
           <Command.Group
             heading="Portfolios"
-            className="[&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[#9CA3AF] [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2"
+            className="[&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[#64748B] [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2"
           >
             {portfolios
               .filter((p) => p.status === "LIVE")
@@ -79,28 +79,34 @@ export function CommandPalette() {
                 <Command.Item
                   key={p.id}
                   value={`${p.title} ${p.owner.displayName} ${p.tagline || ""} ${p.styleCategory || ""}`}
-                  onSelect={() => go(`/portfolio/${p.slug}`)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer text-sm text-[#111827] data-[selected=true]:bg-[#F3F4F6] transition-colors"
+                  onSelect={() => {
+                    if (p.url) {
+                      window.open(p.url, "_blank", "noopener,noreferrer");
+                    } else {
+                      go(`/portfolio/${p.slug}`);
+                    }
+                  }}
+                  className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer text-sm text-[#F8FAFC] data-[selected=true]:bg-[#171922] data-[selected=true]:text-white transition-colors"
                 >
-                  <FileText size={14} className="shrink-0 text-[#9CA3AF]" aria-hidden="true" />
+                  <FileText size={14} className="shrink-0 text-indigo-400" aria-hidden="true" />
                   <span className="flex-1 truncate font-medium">{p.title}</span>
-                  <span className="text-xs text-[#6B7280] truncate">{p.owner.displayName}</span>
+                  <span className="text-xs text-[#64748B] truncate">{p.owner.displayName}</span>
                 </Command.Item>
               ))}
           </Command.Group>
 
           <Command.Group
             heading="Categories"
-            className="[&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[#9CA3AF] [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2"
+            className="[&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[#64748B] [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2"
           >
             {CATEGORIES.map((c) => (
               <Command.Item
                 key={c.slug}
                 value={`category ${c.label}`}
                 onSelect={() => go(`/?category=${c.slug}#wall`)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer text-sm text-[#111827] data-[selected=true]:bg-[#F3F4F6] transition-colors"
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer text-sm text-[#F8FAFC] data-[selected=true]:bg-[#171922] data-[selected=true]:text-white transition-colors"
               >
-                <Shapes size={14} className="shrink-0 text-[#9CA3AF]" aria-hidden="true" />
+                <Shapes size={14} className="shrink-0 text-indigo-400" aria-hidden="true" />
                 {c.label}
               </Command.Item>
             ))}

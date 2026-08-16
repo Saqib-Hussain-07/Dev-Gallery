@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Search, X, ExternalLink } from "lucide-react";
+import { Search, X, ExternalLink, Sparkles } from "lucide-react";
 import { portfolios } from "@/lib/mock-data";
 
 interface Props {
@@ -51,28 +51,28 @@ export function SearchModal({ isOpen, onClose }: Props) {
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-xs p-4 sm:p-6 pt-16 sm:pt-24"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/75 backdrop-blur-md p-4 sm:p-6 pt-16 sm:pt-24"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl rounded-3xl bg-white text-[#111827] shadow-2xl border border-[#E5E7EB] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-2xl rounded-3xl bg-[#1E202B] text-[#94A3B8] shadow-2xl border border-white/[0.1] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Header with Search Input */}
-        <div className="p-4 sm:p-5 border-b border-[#E5E7EB] flex items-center gap-3">
-          <Search size={20} className="text-[#9CA3AF] shrink-0" />
+        <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center gap-3 bg-[#171922]/50">
+          <Search size={20} className="text-indigo-400 shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search Portfolios, Categories or Stack..."
-            className="flex-1 text-sm sm:text-base text-[#111827] placeholder-[#9CA3AF] bg-transparent focus:outline-none"
+            className="flex-1 text-sm sm:text-base text-[#F8FAFC] placeholder-[#64748B] bg-transparent focus:outline-none"
             autoFocus
           />
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="text-xs font-semibold text-[#6B7280] hover:text-black px-2 py-1 bg-[#F3F4F6] rounded-md cursor-pointer"
+              className="text-xs font-semibold text-[#94A3B8] hover:text-white px-2 py-1 bg-[#171922] border border-white/[0.08] rounded-md cursor-pointer"
             >
               Clear
             </button>
@@ -80,7 +80,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           <button
             onClick={onClose}
             aria-label="Close search"
-            className="w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] flex items-center justify-center text-[#4B5563] hover:text-black transition-colors shrink-0 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#171922] hover:bg-[#252836] border border-white/[0.08] flex items-center justify-center text-[#94A3B8] hover:text-white transition-colors shrink-0 cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -90,18 +90,18 @@ export function SearchModal({ isOpen, onClose }: Props) {
         <div className="max-h-[60vh] overflow-y-auto p-5 sm:p-6 space-y-6">
           {query.trim() ? (
             <div>
-              <p className="text-xs font-bold uppercase text-[#6B7280] mb-3">
+              <p className="text-xs font-bold uppercase text-[#64748B] tracking-wider mb-3">
                 Matching Portfolios ({filteredPortfolios.length})
               </p>
               {filteredPortfolios.length === 0 ? (
                 <div className="py-12 text-center">
-                  <p className="text-sm font-semibold text-[#374151]">No portfolios found</p>
-                  <p className="text-xs text-[#6B7280] mt-1">
-                    Try searching with another category or keyword.
+                  <p className="text-sm font-semibold text-[#F8FAFC]">No portfolios found</p>
+                  <p className="text-xs text-[#64748B] mt-1">
+                    Try searching with another category or tech keyword.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {filteredPortfolios.map((p) => (
                     <a
                       key={p.id}
@@ -109,10 +109,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={onClose}
-                      className="flex items-center justify-between p-3 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] transition-all group"
+                      className="flex items-center justify-between p-3.5 rounded-2xl bg-[#0F1117] hover:bg-[#171922] border border-white/[0.07] hover:border-white/[0.18] transition-all group shadow-sm"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="relative w-14 h-10 rounded-lg overflow-hidden shrink-0 border border-[#E5E7EB] bg-[#E5E7EB]">
+                        <div className="relative w-14 h-10 rounded-lg overflow-hidden shrink-0 border border-white/[0.08] bg-[#171922]">
                           <Image
                             src={p.coverImage}
                             alt={p.title}
@@ -123,17 +123,17 @@ export function SearchModal({ isOpen, onClose }: Props) {
                           />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-[#111827] group-hover:text-black">
+                          <p className="text-sm font-bold text-[#F8FAFC] group-hover:text-indigo-300 transition-colors">
                             {p.title || p.owner.displayName}
                           </p>
-                          <p className="text-xs text-[#6B7280]">
+                          <p className="text-xs text-[#64748B]">
                             {p.styleCategory || p.primaryCategory}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs font-semibold text-[#4B5563] group-hover:text-black">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 group-hover:text-indigo-300">
                         <span>Live site</span>
-                        <ExternalLink size={14} />
+                        <ExternalLink size={13} />
                       </div>
                     </a>
                   ))}
@@ -144,7 +144,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
             <>
               {/* Trending Categories */}
               <div>
-                <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider mb-3">
+                <h4 className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-3">
                   Trending Categories
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -153,7 +153,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                       key={cat}
                       type="button"
                       onClick={() => setQuery(cat)}
-                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-full border border-white/[0.08] hover:border-white/[0.2] bg-[#0F1117] hover:bg-[#171922] text-xs font-semibold text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
                     >
                       {cat}
                     </button>
@@ -163,7 +163,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
               {/* Trending Tech Stack */}
               <div>
-                <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider mb-3">
+                <h4 className="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-3">
                   Trending Tech Stack
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -172,7 +172,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                       key={tech}
                       type="button"
                       onClick={() => setQuery(tech)}
-                      className="px-3.5 py-1.5 rounded-full border border-[#E5E7EB] hover:border-black text-xs font-semibold text-[#374151] hover:text-black transition-colors cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-full bg-[rgba(99,102,241,0.08)] text-[#A5B4FC] border border-[rgba(99,102,241,0.2)] hover:bg-[rgba(99,102,241,0.15)] hover:border-[rgba(99,102,241,0.35)] text-xs font-semibold transition-colors cursor-pointer"
                     >
                       {tech}
                     </button>
