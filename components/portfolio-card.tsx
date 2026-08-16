@@ -50,14 +50,21 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
       const storedBookmarks = localStorage.getItem("wop_bookmarks");
       if (storedBookmarks) {
         const parsedIds: string[] = JSON.parse(storedBookmarks);
-        if (Array.isArray(parsedIds) && parsedIds.includes(portfolio.id)) {
+        if (
+          Array.isArray(parsedIds) &&
+          (parsedIds.includes(portfolio.id) ||
+            parsedIds.includes(portfolio.slug) ||
+            parsedIds.includes(portfolio.url))
+        ) {
           setIsBookmarked(true);
+        } else {
+          setIsBookmarked(false);
         }
       }
     } catch (error) {
       console.warn("Failed to load bookmark state:", error);
     }
-  }, [portfolio.id]);
+  }, [portfolio.id, portfolio.slug, portfolio.url]);
 
   /* -------------------------------------------------------------------------- */
   /* Event Handlers                                                             */
@@ -75,10 +82,20 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
         let bookmarkList: string[] = stored ? JSON.parse(stored) : [];
 
         if (isBookmarked) {
-          bookmarkList = bookmarkList.filter((id) => id !== portfolio.id);
+          bookmarkList = bookmarkList.filter(
+            (key) =>
+              key !== portfolio.id &&
+              key !== portfolio.slug &&
+              key !== portfolio.url
+          );
           setIsBookmarked(false);
         } else {
-          bookmarkList.push(portfolio.id);
+          if (!bookmarkList.includes(portfolio.id)) {
+            bookmarkList.push(portfolio.id);
+          }
+          if (!bookmarkList.includes(portfolio.slug)) {
+            bookmarkList.push(portfolio.slug);
+          }
           setIsBookmarked(true);
         }
 
@@ -88,7 +105,7 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
         console.warn("Failed to update bookmark state:", error);
       }
     },
-    [isBookmarked, portfolio.id]
+    [isBookmarked, portfolio.id, portfolio.slug, portfolio.url]
   );
 
   /**

@@ -97,6 +97,20 @@ export default function HomePage() {
     setVisibleCount(INITIAL_PAGE_SIZE);
   }, [selectedCategory]);
 
+  // Listen for global category changes from navbar/command-palette
+  useEffect(() => {
+    function handleCategoryEvent(event: Event) {
+      const customEvent = event as CustomEvent<string>;
+      if (customEvent.detail) {
+        setSelectedCategory(customEvent.detail);
+      }
+    }
+    window.addEventListener("devgallery_set_category", handleCategoryEvent);
+    return () => {
+      window.removeEventListener("devgallery_set_category", handleCategoryEvent);
+    };
+  }, []);
+
   // Spotlight top ranked portfolios
   const spotlightPortfolios = useMemo(() => {
     return allPortfolios.slice(0, 8);
@@ -107,7 +121,10 @@ export default function HomePage() {
     if (selectedCategory === "bookmarks") {
       const bookmarkSet = new Set(savedBookmarkIds);
       return allPortfolios.filter(
-        (p) => bookmarkSet.has(p.id) || bookmarkSet.has(p.slug)
+        (p) =>
+          bookmarkSet.has(p.id) ||
+          bookmarkSet.has(p.slug) ||
+          bookmarkSet.has(p.url)
       );
     }
     if (selectedCategory !== "all") {

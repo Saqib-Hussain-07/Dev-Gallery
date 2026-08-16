@@ -148,9 +148,18 @@ export function Navbar() {
           </button>
 
           {/* Bookmarks Counter Button */}
-          <Link
-            href="/#wall"
-            className="nav-link-bookmarks relative p-1.5 text-[#4B5563] hover:text-black hover:bg-white rounded-full transition-colors"
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent("devgallery_set_category", { detail: "bookmarks" })
+              );
+              const wallElement = document.getElementById("wall");
+              if (wallElement) {
+                wallElement.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="nav-link-bookmarks relative p-1.5 text-[#4B5563] hover:text-black hover:bg-white rounded-full transition-colors cursor-pointer"
             title="View saved bookmarks"
             aria-label={`Saved Bookmarks: ${savedBookmarkCount}`}
           >
@@ -163,7 +172,7 @@ export function Navbar() {
                 {savedBookmarkCount}
               </span>
             )}
-          </Link>
+          </button>
         </nav>
       </div>
     </header>

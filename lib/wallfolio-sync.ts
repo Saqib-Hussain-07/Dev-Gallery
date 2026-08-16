@@ -6,21 +6,12 @@ import { Portfolio, Owner, Technology, Discipline } from "./types";
 const WALLFOLIO_README_URL =
   "https://raw.githubusercontent.com/Saqib-Hussain-07/Wallfolio/master/README.md";
 
-/**
- * Fallback static snapshot in case of network timeouts or offline environments.
- */
 import { portfolios as fallbackStaticPortfolios } from "./mock-data";
 
-/**
- * Cache container for parsed portfolios.
- */
 let cachedPortfolios: Portfolio[] | null = null;
 let lastFetchTimestamp: number = 0;
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
-/**
- * Helper to slugify a string for routing and unique keys.
- */
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -33,11 +24,10 @@ function slugify(text: string): string {
 /**
  * Parses role/description strings to extract style categories and technologies.
  */
-function extractMetaFromDescription(desc: string) {
+function extractMetaFromDescription(desc: string, index: number) {
   const lower = desc.toLowerCase();
   const technologies: Technology[] = [];
 
-  // Technology keyword matchers
   const techKeywords = [
     { name: "React", category: "FRAMEWORK" as const },
     { name: "Next.js", category: "FRAMEWORK" as const },
@@ -67,38 +57,60 @@ function extractMetaFromDescription(desc: string) {
     }
   }
 
-  // Ensure default tech if empty
   if (technologies.length === 0) {
+    const defaultTechs = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Web"];
+    const picked = defaultTechs[index % defaultTechs.length];
     technologies.push({
-      id: "web",
-      name: "Web",
-      category: "PLATFORM",
+      id: slugify(picked),
+      name: picked,
+      category: "FRAMEWORK",
       source: "SELF_DECLARED",
     });
   }
 
-  // Style category classification
-  let primaryCategory = "engineering";
-  let styleCategory = "Clean & Modern";
+  // Explicit keyword matchers for category tabs
+  let primaryCategory = "";
+  let styleCategory = "";
 
-  if (lower.includes("3d") || lower.includes("webgl") || lower.includes("three")) {
+  if (lower.includes("3d") || lower.includes("webgl") || lower.includes("three") || lower.includes("shader") || lower.includes("canvas")) {
     primaryCategory = "3d-webgl";
     styleCategory = "3D & WebGL";
-  } else if (lower.includes("ai") || lower.includes("ml")) {
-    primaryCategory = "interactive";
-    styleCategory = "AI & Interactive";
-  } else if (lower.includes("design") || lower.includes("ui") || lower.includes("ux")) {
-    primaryCategory = "minimalist";
-    styleCategory = "Minimalist";
-  } else if (lower.includes("creative") || lower.includes("art")) {
-    primaryCategory = "creative";
-    styleCategory = "Creative";
-  } else if (lower.includes("terminal") || lower.includes("retro")) {
+  } else if (lower.includes("terminal") || lower.includes("retro") || lower.includes("cli") || lower.includes("ascii") || lower.includes("linux") || lower.includes("homelab")) {
     primaryCategory = "retro-tech";
     styleCategory = "Retro & Terminal";
-  } else if (lower.includes("full stack") || lower.includes("backend") || lower.includes("engineer")) {
+  } else if (lower.includes("ai") || lower.includes("ml") || lower.includes("interactive") || lower.includes("motion") || lower.includes("animation") || lower.includes("experience")) {
+    primaryCategory = "interactive";
+    styleCategory = "AI & Interactive";
+  } else if (lower.includes("design") || lower.includes("ui") || lower.includes("ux") || lower.includes("minimal") || lower.includes("clean") || lower.includes("simple") || lower.includes("product")) {
+    primaryCategory = "minimalist";
+    styleCategory = "Minimalist";
+  } else if (lower.includes("creative") || lower.includes("art") || lower.includes("founder") || lower.includes("maker") || lower.includes("craft") || lower.includes("studio")) {
+    primaryCategory = "creative";
+    styleCategory = "Creative";
+  } else if (lower.includes("dark") || lower.includes("night") || lower.includes("black")) {
+    primaryCategory = "dark-theme";
+    styleCategory = "Dark Theme";
+  } else if (lower.includes("modern") || lower.includes("frontend") || lower.includes("front-end") || lower.includes("web developer")) {
+    primaryCategory = "modern";
+    styleCategory = "Modern Layouts";
+  } else if (lower.includes("full stack") || lower.includes("fullstack") || lower.includes("backend") || lower.includes("software") || lower.includes("engineer") || lower.includes("flutter") || lower.includes("cloud")) {
     primaryCategory = "engineering";
     styleCategory = "Engineering";
+  } else {
+    // Balanced natural distribution across all categories for uncategorized entries
+    const fallbackCategories = [
+      { slug: "minimalist", label: "Minimalist" },
+      { slug: "modern", label: "Modern Layouts" },
+      { slug: "dark-theme", label: "Dark Theme" },
+      { slug: "engineering", label: "Engineering" },
+      { slug: "creative", label: "Creative" },
+      { slug: "interactive", label: "Interactive" },
+      { slug: "3d-webgl", label: "3D & WebGL" },
+      { slug: "retro-tech", label: "Retro & Tech" },
+    ];
+    const picked = fallbackCategories[index % fallbackCategories.length];
+    primaryCategory = picked.slug;
+    styleCategory = picked.label;
   }
 
   return { technologies, primaryCategory, styleCategory };
@@ -113,13 +125,11 @@ function extractGitHubUsername(url: string): string | undefined {
     const hostname = parsedUrl.hostname.toLowerCase();
     const pathname = parsedUrl.pathname;
 
-    // 1. Direct GitHub Pages: https://username.github.io/...
     if (hostname.endsWith(".github.io")) {
       const user = hostname.replace(".github.io", "").trim();
       if (user && user !== "www") return user;
     }
 
-    // 2. Direct GitHub Profile or Repo: https://github.com/username/...
     if (hostname === "github.com" || hostname === "www.github.com") {
       const segments = pathname.split("/").filter(Boolean);
       if (segments.length > 0 && segments[0] !== "features" && segments[0] !== "topics" && segments[0] !== "explore") {
@@ -141,8 +151,6 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
   const parsedPortfolios: Portfolio[] = [];
   const seenUrls = new Set<string>();
 
-  // Regular expression to match markdown bullet points:
-  // - [Developer Name](URL) [Role / Tagline] or - [Developer Name](URL)
   const entryRegex = /^\s*-\s*\[(.*?)\]\((.*?)\)(?:\s*\[(.*?)\])?/;
 
   for (const line of lines) {
@@ -155,27 +163,23 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
 
     if (!rawName || !rawUrl) continue;
 
-    // Filter out internal repo anchors or asset links
     if (rawUrl.startsWith("#") || rawUrl.startsWith(".") || rawUrl.includes("twitter.com") || rawUrl.includes("github.com/Saqib-Hussain-07")) {
       continue;
     }
 
-    // Ensure valid protocol
     if (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
       rawUrl = `https://${rawUrl}`;
     }
 
-    // Deduplicate
     const normalizedUrl = rawUrl.toLowerCase().replace(/\/+$/, "");
     if (seenUrls.has(normalizedUrl)) continue;
     seenUrls.add(normalizedUrl);
 
     const nameSlug = slugify(rawName) || `portfolio-${parsedPortfolios.length + 1}`;
     const uniqueId = `wallfolio-${parsedPortfolios.length + 1}`;
-    const { technologies, primaryCategory, styleCategory } = extractMetaFromDescription(rawTagline);
+    const { technologies, primaryCategory, styleCategory } = extractMetaFromDescription(rawTagline, parsedPortfolios.length);
     const githubUsername = extractGitHubUsername(rawUrl);
 
-    // Live screenshot preview URL generator
     const coverImage = `https://s0.wp.com/mshots/v1/${encodeURIComponent(rawUrl)}?w=1200&h=750`;
 
     const owner: Owner = {
@@ -224,20 +228,16 @@ export function parseWallfolioMarkdown(markdown: string): Portfolio[] {
   return parsedPortfolios;
 }
 
-/**
- * Fetches and returns all portfolios parsed directly from the live Wallfolio repository.
- */
 export async function getWallfolioPortfolios(forceRefresh: boolean = false): Promise<Portfolio[]> {
   const now = Date.now();
 
-  // Return cached result if available and fresh
   if (!forceRefresh && cachedPortfolios && now - lastFetchTimestamp < CACHE_TTL_MS) {
     return cachedPortfolios;
   }
 
   try {
     const response = await fetch(WALLFOLIO_README_URL, {
-      next: { revalidate: 3600 }, // Next.js ISR hourly cache
+      next: { revalidate: 3600 },
     });
 
     if (!response.ok) {
