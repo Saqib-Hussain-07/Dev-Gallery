@@ -134,7 +134,7 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
       className="portfolio-card group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white border border-[#E5E7EB] hover:border-[#9CA3AF] shadow-2xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
     >
       {/* --- Floating Overlay: Status Badge (Top-Left) --- */}
-      <div className="status-badge-container absolute top-3 left-3 z-20 flex items-center gap-1.5">
+      <div className="status-badge-container absolute top-3 left-3 z-10 flex items-center gap-1.5">
         <div
           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 text-white text-[10px] font-bold tracking-wider uppercase backdrop-blur-xs shadow-xs"
           aria-label={`Portfolio Status: ${portfolio.status}`}
@@ -148,7 +148,7 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
       </div>
 
       {/* --- Floating Overlay: Quick Actions (Top-Right) --- */}
-      <div className="quick-actions-container absolute top-3 right-3 z-20 flex items-center gap-1.5">
+      <div className="quick-actions-container absolute top-3 right-3 z-10 flex items-center gap-1.5">
         {/* Share Button */}
         <div className="relative">
           <button

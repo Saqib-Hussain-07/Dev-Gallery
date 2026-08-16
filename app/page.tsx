@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { CategoriesSection } from "@/components/categories-section";
 import { MostLikedStories } from "@/components/most-liked-stories";
 import { CategoryFilterTabs } from "@/components/category-filter-tabs";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { SearchModal } from "@/components/search-modal";
-import { portfolios as staticFallbackPortfolios, getMostLikedPortfolios } from "@/lib/mock-data";
+import { PortfolioCardSkeleton } from "@/components/ui/skeleton";
+import { portfolios as staticFallbackPortfolios } from "@/lib/mock-data";
 import { Portfolio } from "@/lib/types";
-import { Sparkles, Loader2, ArrowDown } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 const INITIAL_PAGE_SIZE = 24;
 const PAGE_INCREMENT = 24;
@@ -20,7 +21,8 @@ const PAGE_INCREMENT = 24;
  * Dynamically synchronized with Saqib-Hussain-07/Wallfolio repository.
  * Features:
  * - 1,900+ Live verified developer portfolios parsed in real-time
- * - Progressive loading / pagination for snappy browser performance
+ * - Smooth Infinite Scrolling with IntersectionObserver
+ * - Shimmering skeleton placeholders matching Wall of Portfolios aesthetic
  * - Category filter tabs & grid view switcher (Bento vs Dense)
  * - Community spotlight top-rated rail
  */
@@ -29,11 +31,15 @@ export default function HomePage() {
   /* State & Data Sync                                                          */
   /* -------------------------------------------------------------------------- */
   const [allPortfolios, setAllPortfolios] = useState<Portfolio[]>(staticFallbackPortfolios);
-  const [isLoadingLive, setIsLoadingLive] = useState<boolean>(true);
+  const [isLoadingInitial, setIsLoadingInitial] = useState<boolean>(true);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"spacious" | "dense">("spacious");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_PAGE_SIZE);
+
+  // Sentinel ref for infinite scroll trigger
+  const infiniteScrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch live Wallfolio dataset on initial mount
   useEffect(() => {
@@ -50,7 +56,7 @@ export default function HomePage() {
       } catch (error) {
         console.warn("Could not load live Wallfolio dataset, using fallback:", error);
       } finally {
-        if (isMounted) setIsLoadingLive(false);
+        if (isMounted) setIsLoadingInitial(false);
       }
     }
 
@@ -86,6 +92,41 @@ export default function HomePage() {
   }, [filteredPortfolios, visibleCount]);
 
   const hasMorePortfolios = visibleCount < filteredPortfolios.length;
+
+  /**
+   * Loads the next batch of portfolios smoothly.
+   */
+  const handleLoadNextBatch = useCallback(() => {
+    if (!hasMorePortfolios || isLoadingMore) return;
+    setIsLoadingMore(true);
+
+    // Subtle micro-delay to let skeleton shimmer render smoothly
+    setTimeout(() => {
+      setVisibleCount((prev) => Math.min(prev + PAGE_INCREMENT, filteredPortfolios.length));
+      setIsLoadingMore(false);
+    }, 250);
+  }, [hasMorePortfolios, isLoadingMore, filteredPortfolios.length]);
+
+  // IntersectionObserver for seamless infinite scrolling
+  useEffect(() => {
+    const sentinel = infiniteScrollSentinelRef.current;
+    if (!sentinel || !hasMorePortfolios) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+        if (firstEntry && firstEntry.isIntersecting) {
+          handleLoadNextBatch();
+        }
+      },
+      { rootMargin: "400px" } // Trigger 400px before reaching the bottom
+    );
+
+    observer.observe(sentinel);
+    return () => {
+      observer.disconnect();
+    };
+  }, [handleLoadNextBatch, hasMorePortfolios]);
 
   /* -------------------------------------------------------------------------- */
   /* Render                                                                     */
@@ -156,7 +197,7 @@ export default function HomePage() {
           <MostLikedStories portfolios={spotlightPortfolios} />
 
           {/* ================================================================= */}
-          {/* 4. CURATED PORTFOLIO WALL & FILTER GRID                          */}
+          {/* 4. CURATED PORTFOLIO WALL & INFINITE SCROLL GRID                 */}
           {/* ================================================================= */}
           <section id="wall" className="portfolio-wall-section pt-8 pb-20">
             {/* Section Header */}
@@ -166,12 +207,12 @@ export default function HomePage() {
                   Curated Developer Portfolios
                 </h2>
                 <p className="wall-subtitle text-xs text-[#71717A] font-medium">
-                  Showing {paginatedPortfolios.length} of {filteredPortfolios.length} portfolios
+                  Showing {paginatedPortfolios.length} of {filteredPortfolios.length.toLocaleString()} portfolios
                 </p>
               </div>
             </header>
 
-            {/* Sticky Category Tabs with View Mode Toggle */}
+            {/* Sticky Category Tabs with Higher Z-Index & View Mode Toggle */}
             <CategoryFilterTabs
               selectedCategory={selectedCategory}
               onSelectCategory={(category) => setSelectedCategory(category)}
@@ -182,7 +223,20 @@ export default function HomePage() {
 
             {/* Portfolio Grid Container */}
             <div className="portfolio-grid-wrapper pt-6">
-              {filteredPortfolios.length === 0 ? (
+              {isLoadingInitial ? (
+                /* Initial Loading Skeleton Grid */
+                <div
+                  className={`portfolio-grid grid gap-6 sm:gap-7 ${
+                    viewMode === "spacious"
+                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                      : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  }`}
+                >
+                  {Array.from({ length: 12 }).map((_, idx) => (
+                    <PortfolioCardSkeleton key={idx} />
+                  ))}
+                </div>
+              ) : filteredPortfolios.length === 0 ? (
                 /* Empty Filter Result State */
                 <div className="empty-filter-state py-20 text-center bg-white rounded-3xl border border-[#E4E4E7] p-8 shadow-xs">
                   <p className="text-base font-bold text-[#09090B]">
@@ -200,7 +254,7 @@ export default function HomePage() {
                   </button>
                 </div>
               ) : (
-                /* Dynamic Portfolio Grid */
+                /* Dynamic Portfolio Grid with Infinite Scroll */
                 <>
                   <div
                     className={`portfolio-grid grid gap-6 sm:gap-7 ${
@@ -212,21 +266,32 @@ export default function HomePage() {
                     {paginatedPortfolios.map((portfolio) => (
                       <PortfolioCard key={portfolio.id} portfolio={portfolio} />
                     ))}
+
+                    {/* Skeletons when fetching next batch */}
+                    {isLoadingMore &&
+                      Array.from({ length: 6 }).map((_, idx) => (
+                        <PortfolioCardSkeleton key={`loading-${idx}`} />
+                      ))}
                   </div>
 
-                  {/* Load More Button & Progress */}
-                  {hasMorePortfolios && (
-                    <div className="load-more-container mt-12 flex flex-col items-center justify-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setVisibleCount((prev) => prev + PAGE_INCREMENT)}
-                        className="btn-load-more inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#09090B] hover:bg-[#18181B] text-white text-sm font-bold shadow-md hover:shadow-xl transition-all hover:scale-102 active:scale-98 cursor-pointer"
-                      >
-                        <ArrowDown size={15} />
-                        <span>Load more portfolios</span>
-                      </button>
-                      <p className="text-xs text-[#71717A] font-medium">
-                        Showing {paginatedPortfolios.length} of {filteredPortfolios.length.toLocaleString()} total
+                  {/* Infinite Scroll Sentinel */}
+                  {hasMorePortfolios ? (
+                    <div
+                      ref={infiniteScrollSentinelRef}
+                      className="infinite-scroll-sentinel py-8 flex items-center justify-center gap-2 text-xs font-semibold text-[#71717A]"
+                    >
+                      <Loader2 size={16} className="animate-spin text-black" />
+                      <span>Loading more portfolios...</span>
+                    </div>
+                  ) : (
+                    /* End of List Confirmation */
+                    <div className="end-of-gallery-state mt-16 py-8 border-t border-[#F0F1F3] flex flex-col items-center justify-center gap-1.5 text-center text-[#71717A]">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#111827]">
+                        <CheckCircle2 size={15} className="text-emerald-600" />
+                        <span>All {filteredPortfolios.length.toLocaleString()} portfolios loaded</span>
+                      </div>
+                      <p className="text-[11px]">
+                        Curated from the Wallfolio open source community
                       </p>
                     </div>
                   )}

@@ -30,7 +30,7 @@ export function CategoryFilterTabs({
   onOpenSearchModal,
 }: CategoryFilterTabsProps) {
   return (
-    <div className="sticky-filter-toolbar sticky top-14 z-20 bg-white/95 backdrop-blur-xl py-3.5 border-b border-[#E4E4E7] transition-all">
+    <div className="sticky-filter-toolbar sticky top-14 z-30 bg-white py-3.5 border-b border-[#E4E4E7] shadow-2xs transition-all">
       <div className="filter-toolbar-container flex items-center justify-between gap-3">
         {/* --- Category Filter Radio Pills --- */}
         <nav
