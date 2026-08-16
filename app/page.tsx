@@ -12,31 +12,20 @@ import { portfolios, getMostLikedPortfolios } from "@/lib/mock-data";
 
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedTech, setSelectedTech] = useState("All Tech");
   const [viewMode, setViewMode] = useState<"spacious" | "dense">("spacious");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const mostLikedList = useMemo(() => getMostLikedPortfolios(8), []);
 
-  // Filter portfolios by selected category and tech stack
+  // Filter portfolios by selected category
   const filteredPortfolios = useMemo(() => {
     return portfolios.filter((p) => {
-      // Category tab filter
       if (selectedCategory !== "all") {
         if (p.primaryCategory !== selectedCategory) return false;
       }
-
-      // Tech stack pill filter
-      if (selectedTech !== "All Tech") {
-        const matchesTech = p.technologies.some(
-          (t) => t.name.toLowerCase() === selectedTech.toLowerCase()
-        );
-        if (!matchesTech) return false;
-      }
-
       return true;
     });
-  }, [selectedCategory, selectedTech]);
+  }, [selectedCategory]);
 
   return (
     <div className="flex w-full min-h-screen bg-[#E2E4E9]">
@@ -108,12 +97,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Sticky Category & Tech Stack Tabs with View Mode Toggle */}
+          {/* Sticky Category Tabs with View Mode Toggle */}
           <CategoryFilterTabs
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
-            selectedTech={selectedTech}
-            onSelectTech={setSelectedTech}
             viewMode={viewMode}
             onToggleViewMode={setViewMode}
             onOpenSearchModal={() => setIsSearchModalOpen(true)}
@@ -124,21 +111,18 @@ export default function HomePage() {
             {filteredPortfolios.length === 0 ? (
               <div className="py-20 text-center bg-white rounded-3xl border border-[#E4E4E7] p-8 shadow-xs">
                 <p className="text-base font-bold text-[#09090B]">
-                  No portfolios match this combination
+                  No portfolios match this category
                 </p>
                 <p className="text-xs text-[#71717A] mt-1 mb-4">
-                  Try clearing the tech stack or selecting all categories.
+                  Explore all portfolios or switch category.
                 </p>
                 <div className="flex items-center justify-center gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedCategory("all");
-                      setSelectedTech("All Tech");
-                    }}
+                    onClick={() => setSelectedCategory("all")}
                     className="px-5 py-2 rounded-full bg-[#09090B] text-white text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#18181B] transition-colors"
                   >
-                    Reset all filters
+                    View all portfolios
                   </button>
                 </div>
               </div>
@@ -151,11 +135,7 @@ export default function HomePage() {
                 }`}
               >
                 {filteredPortfolios.map((portfolio) => (
-                  <PortfolioCard
-                    key={portfolio.id}
-                    portfolio={portfolio}
-                    onSelectTech={(techName) => setSelectedTech(techName)}
-                  />
+                  <PortfolioCard key={portfolio.id} portfolio={portfolio} />
                 ))}
               </div>
             )}

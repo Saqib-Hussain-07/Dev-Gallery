@@ -174,24 +174,15 @@ export function PortfolioCard({ portfolio, onSelectTech }: Props) {
             )}
           </div>
 
-          {/* Clickable Technology Badges */}
+          {/* Technology Badges */}
           <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
             {portfolio.technologies.slice(0, 3).map((tech) => (
-              <button
+              <span
                 key={tech.id}
-                type="button"
-                onClick={(e) => {
-                  if (onSelectTech) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onSelectTech(tech.name);
-                  }
-                }}
-                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F4F4F5] text-[#3F3F46] hover:text-black hover:bg-[#E4E4E7] border border-[#E4E4E7] transition-colors cursor-pointer"
-                title={`Filter by ${tech.name}`}
+                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F4F4F5] text-[#3F3F46] border border-[#E4E4E7]"
               >
                 {tech.name}
-              </button>
+              </span>
             ))}
             {portfolio.technologies.length > 3 && (
               <span className="text-[10px] text-[#71717A] font-medium">
