@@ -39,7 +39,7 @@ export default function HomePage() {
   }, [selectedCategory, selectedTech]);
 
   return (
-    <div className="flex w-full min-h-screen bg-[#FAFAFB]">
+    <div className="flex w-full min-h-screen bg-[#FFFFFF]">
       {/* Left Sidebar Navigation */}
       <SidebarNav />
 

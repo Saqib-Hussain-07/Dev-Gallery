@@ -8,10 +8,10 @@
 
 @theme {
   /* Canvas & Backgrounds */
-  --color-paper: #fafafb;
-  --color-paper-dim: #f3f4f6;
+  --color-paper: #ffffff;
+  --color-paper-dim: #f4f4f5;
   --color-paper-card: #ffffff;
-  --color-card-hover: #f9fafb;
+  --color-card-hover: #fafafa;
 
   /* Typography Colors */
   --color-ink: #111827;
@@ -42,14 +42,14 @@
 }
 
 html {
-  background-color: var(--color-paper);
+  background-color: #ffffff;
   color: var(--color-ink);
   color-scheme: light;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--color-paper);
+  background-color: #ffffff;
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;

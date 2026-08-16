@@ -34,7 +34,7 @@ export function CategoryFilterTabs({
   onOpenSearchModal,
 }: Props) {
   return (
-    <div className="sticky top-[68px] z-20 bg-[#FAFAFB]/95 backdrop-blur-xl py-3 border-b border-[#E4E4E7] transition-all">
+    <div className="sticky top-[68px] z-20 bg-white/95 backdrop-blur-xl py-3 border-b border-[#E4E4E7] transition-all">
       <div className="flex flex-col gap-2.5">
         {/* Top Row: Category Tabs & View Mode / Search */}
         <div className="flex items-center justify-between gap-3">
