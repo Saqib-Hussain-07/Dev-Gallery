@@ -13,14 +13,15 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://wallofportfolios.in"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://devgallery.com"),
   title: {
-    default: "Wall of Portfolios — Curated Directory of 1,900+ Developer & Designer Portfolios",
-    template: "%s | Wall of Portfolios",
+    default: "DevGallery — Curated Directory of 1,900+ Developer & Designer Portfolios",
+    template: "%s | DevGallery",
   },
   description:
-    "Wall of Portfolios is a curated directory of 1,900+ world-class developer & designer portfolios. Explore live websites, verified tech stacks, and creative inspiration.",
+    "DevGallery is a curated index of 1,900+ world-class developer & designer portfolios. Explore live websites, verified tech stacks, and creative inspiration.",
   keywords: [
+    "DevGallery",
     "developer portfolio",
     "designer portfolio",
     "software engineer",
@@ -32,20 +33,20 @@ export const metadata: Metadata = {
     "Three.js portfolio",
     "minimalist portfolio",
   ],
-  authors: [{ name: "Wall of Portfolios Community" }],
+  authors: [{ name: "DevGallery Community" }],
   creator: "Saqib Hussain",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://wallofportfolios.in",
-    siteName: "Wall of Portfolios",
-    title: "Wall of Portfolios — Curated Directory of 1,900+ Developer Portfolios",
+    url: "https://devgallery.com",
+    siteName: "DevGallery",
+    title: "DevGallery — Curated Directory of 1,900+ Developer Portfolios",
     description:
       "Explore 1,900+ handpicked, live developer and designer portfolios with real-time previews and tech stacks.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wall of Portfolios — Curated Directory of 1,900+ Developer Portfolios",
+    title: "DevGallery — Curated Directory of 1,900+ Developer Portfolios",
     description:
       "Explore 1,900+ handpicked, live developer and designer portfolios with real-time previews and tech stacks.",
   },

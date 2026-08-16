@@ -64,7 +64,7 @@ export function CommandPalette() {
       role="presentation"
     >
       <Command
-        label="Search Wall of Portfolios"
+        label="Search DevGallery"
         className="command-palette-modal w-full max-w-xl bg-white border border-[#E5E7EB] rounded-2xl shadow-2xl overflow-hidden"
         onClick={(event) => event.stopPropagation()}
         shouldFilter
@@ -74,7 +74,7 @@ export function CommandPalette() {
           <Search size={16} className="text-[#9CA3AF] shrink-0" aria-hidden="true" />
           <Command.Input
             autoFocus
-            placeholder="Search portfolios, categories, skills…"
+            placeholder="Search DevGallery portfolios, categories, skills…"
             className="command-input-field w-full bg-transparent py-4 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
           />
           <kbd className="kbd-esc text-[10px] font-mono text-[#6B7280] border border-[#E5E7EB] px-1.5 py-0.5 rounded-sm shrink-0">

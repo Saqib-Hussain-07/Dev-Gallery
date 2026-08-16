@@ -6,8 +6,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B7280]">
         {/* Left: Brand & Copyright */}
         <div className="flex items-center gap-2">
-          <span className="font-extrabold text-black">WALL OF PORTFOLIOS</span>
-          <span>© {new Date().getFullYear()} — Curated Developer &amp; Designer Directory.</span>
+          <span className="font-extrabold text-black">DevGallery</span>
+          <span>© {new Date().getFullYear()} — Curated Index of 1,900+ Developer &amp; Designer Portfolios.</span>
         </div>
 
         {/* Right: Links */}

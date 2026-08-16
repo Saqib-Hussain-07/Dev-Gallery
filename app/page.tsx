@@ -291,7 +291,7 @@ export default function HomePage() {
                         <span>All {filteredPortfolios.length.toLocaleString()} portfolios loaded</span>
                       </div>
                       <p className="text-[11px]">
-                        Curated from the Wallfolio open source community
+                        Curated by DevGallery from the open source developer community
                       </p>
                     </div>
                   )}

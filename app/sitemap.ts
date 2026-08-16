@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { portfolios } from "@/lib/mock-data";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://wallofportfolios.in";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://devgallery.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -93,34 +93,20 @@ export function Navbar() {
         <div className="navbar-brand-section flex items-center shrink-0">
           <Link
             href="/"
-            className="brand-logo-link flex items-center gap-2 group cursor-pointer"
-            aria-label="Wall of Portfolios Home"
+            className="navbar-brand-link flex items-center gap-2.5 group focus:outline-none"
+            aria-label="DevGallery Home"
           >
-            {/* Geometric Mark */}
-            <div className="brand-logo-icon flex items-center text-black">
-              <svg
-                width="30"
-                height="18"
-                viewBox="0 0 44 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="transition-transform group-hover:scale-105"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 14C5 7 9 4 13 4L17 17L23 5L28 19L33 9C35 5 39 4 43 4L37 20L30 8L24 20L18 7L13 20L3 14Z"
-                  fill="currentColor"
-                />
-              </svg>
+            {/* Brand Mark Icon */}
+            <div className="brand-logo-icon flex items-center justify-center h-8 w-8 rounded-xl bg-black text-white shadow-xs group-hover:scale-105 transition-transform">
+              <span className="font-mono font-black text-sm tracking-tighter text-white">
+                DG
+              </span>
             </div>
 
             {/* Typography */}
-            <div className="brand-logo-typography flex flex-col leading-tight">
-              <span className="font-extrabold text-[9px] tracking-wider text-black">
-                WALL OF
-              </span>
-              <span className="font-black text-xs tracking-tight text-black leading-none">
-                PORTFOLIOS
+            <div className="brand-logo-typography flex items-center leading-none">
+              <span className="font-extrabold text-base tracking-tight text-black">
+                Dev<span className="text-[#6B7280] font-bold">Gallery</span>
               </span>
             </div>
           </Link>
@@ -137,7 +123,7 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               <Search size={14} className="text-[#9CA3AF] group-hover:text-black transition-colors" />
               <span className="text-[#6B7280] group-hover:text-black truncate">
-                Search portfolios, categories...
+                Search DevGallery portfolios, categories...
               </span>
             </div>
             <kbd className="inline-flex items-center gap-0.5 text-[10px] bg-[#F3F4F6] border border-[#E5E7EB] px-1.5 py-0.5 rounded font-medium text-[#4B5563]">
