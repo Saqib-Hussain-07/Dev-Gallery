@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#ECEEF2] text-[#111827] font-sans antialiased selection:bg-black selection:text-white">
+      <body className="min-h-screen flex flex-col bg-[#E2E4E9] text-[#111827] font-sans antialiased selection:bg-black selection:text-white">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
