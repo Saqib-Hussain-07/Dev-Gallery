@@ -75,7 +75,7 @@ export const portfolios: Portfolio[] = [
     },
     status: "LIVE",
     discipline: ["ENGINEERING"],
-    coverImage: "https://s0.wp.com/mshots/v1/https%3A%2F%2Fitsvg.in?w=640&h=400",
+    coverImage: "https://itsvg.in/og.png",
     qualityScore: 99,
     aiSummary: "Featured developer portfolio of Vivek Gupta: https://itsvg.in",
     viewCount: 2450,
