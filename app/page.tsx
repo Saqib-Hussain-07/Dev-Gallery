@@ -187,17 +187,6 @@ export default function HomePage() {
           {/* 1. HERO SECTION                                                  */}
           {/* ================================================================= */}
           <section className="hero-section text-center pt-2 sm:pt-4 pb-3 flex flex-col items-center">
-            {/* Live Repository Sync Ticker */}
-            <div className="hero-ticker inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#E4E4E7] text-xs font-semibold text-[#52525B] mb-3 shadow-2xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>{allPortfolios.length.toLocaleString()}+ Live Portfolios Synced</span>
-              <span className="text-[#D4D4D8]">•</span>
-              <span className="text-violet-700 font-bold">Updated Daily</span>
-            </div>
-
             {/* Main Headline */}
             <h1 className="hero-headline text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#09090B] tracking-tight leading-[1.06] max-w-4xl">
               The curated gallery of <br className="hidden sm:inline" />
@@ -250,9 +239,6 @@ export default function HomePage() {
                 <h2 className="wall-title text-xl sm:text-2xl font-extrabold text-[#09090B] tracking-tight">
                   {selectedCategory === "bookmarks" ? "Your Saved Bookmarks" : "Curated Developer Portfolios"}
                 </h2>
-                <p className="wall-subtitle text-xs text-[#71717A] font-medium">
-                  Showing {paginatedPortfolios.length} of {filteredPortfolios.length.toLocaleString()} portfolios
-                </p>
               </div>
             </header>
 

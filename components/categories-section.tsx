@@ -18,9 +18,6 @@ export function CategoriesSection() {
         <h2 className="section-title text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
           Explore Top Categories
         </h2>
-        <span className="section-subtitle text-xs font-semibold text-[#6B7280]">
-          Curated Styles
-        </span>
       </header>
 
       {/* Categories Cards Grid */}

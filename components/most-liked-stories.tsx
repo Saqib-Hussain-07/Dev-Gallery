@@ -51,9 +51,6 @@ export function MostLikedStories({ portfolios }: MostLikedStoriesProps) {
             <h2 className="section-title text-xl sm:text-2xl font-extrabold text-[#09090B] tracking-tight">
               Community Spotlight
             </h2>
-            <p className="section-subtitle text-xs text-[#71717A] font-medium hidden sm:block">
-              Top ranked portfolios voted by designers &amp; engineers worldwide
-            </p>
           </div>
         </div>
 

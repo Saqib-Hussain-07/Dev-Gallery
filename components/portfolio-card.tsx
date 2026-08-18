@@ -46,26 +46,36 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
     setIsImageLoaded(false);
   }, [portfolio.coverImage]);
 
-  // Load bookmark status from localStorage on mount
+  // Load bookmark status from localStorage on mount and sync on global bookmark changes
   useEffect(() => {
-    try {
-      const storedBookmarks = localStorage.getItem("wop_bookmarks");
-      if (storedBookmarks) {
-        const parsedIds: string[] = JSON.parse(storedBookmarks);
-        if (
-          Array.isArray(parsedIds) &&
-          (parsedIds.includes(portfolio.id) ||
-            parsedIds.includes(portfolio.slug) ||
-            parsedIds.includes(portfolio.url))
-        ) {
-          setIsBookmarked(true);
-        } else {
-          setIsBookmarked(false);
+    const checkBookmarkStatus = () => {
+      try {
+        const storedBookmarks = localStorage.getItem("wop_bookmarks");
+        if (storedBookmarks) {
+          const parsedIds: string[] = JSON.parse(storedBookmarks);
+          if (
+            Array.isArray(parsedIds) &&
+            (parsedIds.includes(portfolio.id) ||
+              parsedIds.includes(portfolio.slug) ||
+              parsedIds.includes(portfolio.url))
+          ) {
+            setIsBookmarked(true);
+            return;
+          }
         }
+        setIsBookmarked(false);
+      } catch (error) {
+        console.warn("Failed to load bookmark state:", error);
       }
-    } catch (error) {
-      console.warn("Failed to load bookmark state:", error);
-    }
+    };
+
+    checkBookmarkStatus();
+    window.addEventListener("wop_bookmarks_updated", checkBookmarkStatus);
+    window.addEventListener("storage", checkBookmarkStatus);
+    return () => {
+      window.removeEventListener("wop_bookmarks_updated", checkBookmarkStatus);
+      window.removeEventListener("storage", checkBookmarkStatus);
+    };
   }, [portfolio.id, portfolio.slug, portfolio.url]);
 
   /* -------------------------------------------------------------------------- */
@@ -92,12 +102,14 @@ export function PortfolioCard({ portfolio }: PortfolioCardProps) {
           );
           setIsBookmarked(false);
         } else {
-          if (!bookmarkList.includes(portfolio.id)) {
-            bookmarkList.push(portfolio.id);
-          }
-          if (!bookmarkList.includes(portfolio.slug)) {
-            bookmarkList.push(portfolio.slug);
-          }
+          // Remove any legacy references first to prevent duplication
+          bookmarkList = bookmarkList.filter(
+            (key) =>
+              key !== portfolio.id &&
+              key !== portfolio.slug &&
+              key !== portfolio.url
+          );
+          bookmarkList.push(portfolio.id);
           setIsBookmarked(true);
         }
 
