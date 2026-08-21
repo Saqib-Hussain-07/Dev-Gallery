@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-/*
-  DESIGN SYSTEM — "Wall of Portfolios / DevGallery"
-  Ultra-clean, modern, light-neutral showcase design system with high-contrast typography,
-  pure-white cards, subtle hairline borders, vibrant story rings, and smooth micro-interactions.
-*/
+/* ==========================================================================
+   DESIGN SYSTEM — "DevGallery"
+   Ultra-clean, modern, light-neutral showcase design system with high-contrast typography,
+   pure-white cards, subtle hairline borders, vibrant story rings, and smooth micro-interactions.
+   ========================================================================== */
 
 @theme {
   /* Canvas & Backgrounds */

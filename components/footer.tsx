@@ -20,7 +20,7 @@ export function Footer() {
             Explore All
           </Link>
           <a
-            href="https://github.com/Saqib-Hussain-07/Wallfolio"
+            href="https://github.com/Saqib-Hussain-07/Dev-Gallery"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-black transition-colors"

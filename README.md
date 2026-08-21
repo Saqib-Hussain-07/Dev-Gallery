@@ -1,6 +1,6 @@
-# Dev-Gallery | Wall of Portfolios
+# DevGallery
 
-Curated showcase of the finest developer & designer portfolios from top builders worldwide. Inspired by modern portfolio curation platforms with a crisp light-neutral aesthetic, interactive story rings, and category filtering.
+Curated showcase of the finest developer & designer portfolios from top builders worldwide. A crisp light-neutral aesthetic, spotlight rankings, and fast category filtering.
 
 ## Tech Stack
 - **Framework**: Next.js 16 (Turbopack, App Router)
@@ -10,11 +10,11 @@ Curated showcase of the finest developer & designer portfolios from top builders
 - **Icons**: Lucide React
 
 ## Key Features
-- **Curated Wall**: High-contrast, responsive cards linking directly to live portfolios with verified skills and experience.
-- **Most Liked Portfolios**: Story circles ranked by community all-time likes with full modal previews.
+- **Curated Gallery**: High-contrast, responsive cards linking directly to live portfolios with verified skills and experience.
+- **Community Spotlight**: Spotlight rankings by community all-time likes.
 - **Top Categories**: Explore Minimalist, Dark Theme, Interactive WebGL, Creative, Modern Layouts, and Engineering showcases.
-- **Dynamic Filtering**: Slide-over drawer with Years of Experience, Roles/Designations, Country filters, and "Open to work" toggling.
-- **Repository Sync**: Admin dashboard to sync and curate projects from public GitHub accounts.
+- **Dynamic Filtering**: Slide-over drawer and tab filters for Categories, Roles, and "Open to work" toggling.
+- **Command Palette**: `Cmd+K` instant search across the entire DevGallery portfolio index.
 
 ## Getting Started
 

@@ -17,13 +17,13 @@ const PAGE_INCREMENT = 24;
 /**
  * HomePage Component
  *
- * Full-width, edge-to-edge responsive gallery synchronized with Saqib-Hussain-07/Wallfolio.
+ * Full-width, edge-to-edge responsive gallery showcasing DevGallery developer portfolios.
  * Features:
  * - 1,940+ Live developer portfolios parsed in real-time
  * - Wide expansive layout with minimal horizontal gaps
  * - 100% No-login bookmarks filter (using localStorage)
  * - Smooth Infinite Scrolling with IntersectionObserver
- * - Shimmering skeleton placeholders matching Wall of Portfolios aesthetic
+ * - Shimmering skeleton placeholders matching DevGallery aesthetic
  * - Category filter tabs & grid view switcher (Bento vs Dense)
  */
 export default function HomePage() {
